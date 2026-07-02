@@ -254,7 +254,10 @@ test("checkoutUrl creates a payment link carrying the tier's variation id", asyn
     },
   });
   try {
-    const p = provider({ redirectUrl: "https://venue.example/thanks" });
+    const p = provider({
+      redirectUrl: "https://venue.example/thanks",
+      tierPrices: { "club-2": 4000 },
+    });
     const url = await p.checkoutUrl(
       { providerId: "PLAN", tierRefs: { "club-2": "VAR-2" } },
       "club-2",
@@ -264,6 +267,31 @@ test("checkoutUrl creates a payment link carrying the tier's variation id", asyn
     assert.equal(call.body.checkout_options.subscription_plan_id, "VAR-2");
     assert.equal(call.body.checkout_options.redirect_url, "https://venue.example/thanks");
     assert.equal(call.body.quick_pay.location_id, "L123");
+    assert.equal(call.body.quick_pay.price_money.amount, 4000);
+  } finally {
+    fm.restore();
+  }
+});
+
+test("checkoutUrl uses the price recorded by createPlan", async () => {
+  const fm = mockFetch({
+    "/v2/catalog/batch-upsert": {
+      id_mappings: [
+        { client_object_id: "#plan", object_id: "PLAN" },
+        { client_object_id: "#tier-club-2", object_id: "VAR-2" },
+        { client_object_id: "#tier-club-4", object_id: "VAR-4" },
+      ],
+    },
+    "/v2/online-checkout/payment-links": {
+      payment_link: { url: "https://checkout.example/pay/xyz" },
+    },
+  });
+  try {
+    const p = provider();
+    const plan = await p.createPlan(program);
+    await p.checkoutUrl(plan, "club-4");
+    const call = fm.calls[1]!;
+    assert.equal(call.body.quick_pay.price_money.amount, 6500);
   } finally {
     fm.restore();
   }
@@ -275,6 +303,18 @@ test("checkoutUrl throws on an unknown tier", async () => {
       provider().checkoutUrl({ providerId: "PLAN", tierRefs: {} }, "nope"),
     ),
     /unknown tier/,
+  );
+});
+
+test("checkoutUrl throws when no price is known for the tier", async () => {
+  await assert.rejects(
+    Promise.resolve(
+      provider().checkoutUrl(
+        { providerId: "PLAN", tierRefs: { "club-2": "VAR-2" } },
+        "club-2",
+      ),
+    ),
+    /no price known/,
   );
 });
 

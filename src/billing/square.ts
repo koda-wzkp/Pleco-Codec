@@ -49,6 +49,13 @@ export interface SquareProviderOptions {
    * events with the CODEC tier id instead of the raw variation id.
    */
   tierRefs?: Record<TierId, string>;
+  /**
+   * TierId -> priceCents, used for `quick_pay.price_money` on payment links.
+   * Only needed when `checkoutUrl` is called on a provider instance that did
+   * not create the plan itself (e.g. plans made by hand in the Square
+   * Dashboard); `createPlan` records its program's prices automatically.
+   */
+  tierPrices?: Record<TierId, number>;
 }
 
 const BASE_URLS = {
@@ -78,10 +85,13 @@ export function webhookEventId(rawBody: string): string | null {
 export class SquareProvider implements BillingProvider {
   private readonly opts: SquareProviderOptions;
   private readonly baseUrl: string;
+  /** TierId -> priceCents, seeded from options and topped up by createPlan. */
+  private readonly tierPrices: Record<TierId, number>;
 
   constructor(options: SquareProviderOptions) {
     this.opts = options;
     this.baseUrl = BASE_URLS[options.environment];
+    this.tierPrices = { ...options.tierPrices };
   }
 
   // ---------------------------------------------------------------- plans
@@ -115,6 +125,7 @@ export class SquareProvider implements BillingProvider {
     const tierClientIds: Record<TierId, string> = {};
     for (const tier of program.tiers) {
       tierClientIds[tier.id] = `#tier-${tier.id}`;
+      this.tierPrices[tier.id] = tier.priceCents;
     }
 
     const objects = [
@@ -197,19 +208,26 @@ export class SquareProvider implements BillingProvider {
       );
     }
 
+    const priceCents = this.tierPrices[tier];
+    if (priceCents === undefined) {
+      throw new Error(
+        `SquareProvider.checkoutUrl: no price known for tier "${tier}" — ` +
+          "call createPlan first or pass tierPrices in the constructor " +
+          "(required for quick_pay.price_money on the payment link)",
+      );
+    }
+
     const res = await this.request("/v2/online-checkout/payment-links", {
       idempotency_key: randomUUID(),
       // quick_pay creates an ad-hoc item for the link; the subscription
       // itself is driven by checkout_options.subscription_plan_id.
       quick_pay: {
         name: tier,
-        // VERIFY: with a subscription_plan_id present, Square derives the
-        // recurring charge from the plan variation's phase pricing; confirm
-        // whether quick_pay price_money must match the variation price or is
-        // ignored. We send a 1-unit placeholder-free amount of 100 cents only
-        // if required — currently we omit price by sending the variation's
-        // price via the plan. Confirm against CreatePaymentLink docs.
-        price_money: { amount: 100, currency: "USD" },
+        // VERIFY: with a subscription_plan_id present, confirm against the
+        // CreatePaymentLink docs whether quick_pay price_money must match the
+        // plan variation's phase price or is superseded by it. We always send
+        // the tier's real price so either reading bills correctly.
+        price_money: { amount: priceCents, currency: "USD" },
         location_id: this.opts.locationId,
       },
       checkout_options: {
