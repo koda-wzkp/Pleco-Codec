@@ -8,4 +8,5 @@ export type {
   MemberEmailContext,
   OwnerEmailContext,
   LaunchEmailContext,
+  PickupEmailContext,
 } from "./templates.js";

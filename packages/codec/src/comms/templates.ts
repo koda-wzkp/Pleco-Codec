@@ -48,6 +48,15 @@ export interface LaunchEmailContext {
   contactEmail?: string;
 }
 
+export interface PickupEmailContext {
+  venueName: string;
+  /** Human-readable pickup date/window: "ready {date}". */
+  pickupOn: string;
+  /** Optional detail line: roast note, hours, what's in this drop. */
+  details?: string;
+  contactEmail?: string;
+}
+
 export type TemplateFn<C> = (ctx: C) => RenderedEmail;
 
 export interface CoreTemplates {
@@ -61,6 +70,8 @@ export interface CoreTemplates {
   ownerNotification: TemplateFn<OwnerEmailContext>;
   /** waitlist -> launch campaign: "billing starts {date}, here's your link". */
   launch: TemplateFn<LaunchEmailContext>;
+  /** pickup/fulfillment reminder: "your {order} is ready {date}" (OHE roast->pickup). */
+  pickupReminder: TemplateFn<PickupEmailContext>;
 }
 
 function esc(s: string): string {
@@ -182,6 +193,28 @@ export const defaultTemplates: CoreTemplates = {
         `You're on the founding list, so here's your signup link before anyone else:\n` +
         `${ctx.checkoutUrl}\n` +
         (ctx.contactEmail ? `\nQuestions? Write us at ${ctx.contactEmail}.\n` : ""),
+    };
+  },
+
+  pickupReminder: (ctx) => {
+    const subject = `${ctx.venueName} — your pickup is ready ${ctx.pickupOn}`;
+    const detail = ctx.details ? p(esc(ctx.details)) : "";
+    const contact = ctx.contactEmail
+      ? p(esc(`Questions? Just reply, or write us at ${ctx.contactEmail}.`))
+      : p(`Questions? Just reply to this email.`);
+    return {
+      subject,
+      html: shell(
+        p(`Good news — your membership pickup is ready ${esc(ctx.pickupOn)}.`) +
+          detail +
+          contact,
+      ),
+      text:
+        `Good news — your membership pickup is ready ${ctx.pickupOn}.\n\n` +
+        (ctx.details ? `${ctx.details}\n\n` : "") +
+        (ctx.contactEmail
+          ? `Questions? Just reply, or write us at ${ctx.contactEmail}.\n`
+          : `Questions? Just reply to this email.\n`),
     };
   },
 };

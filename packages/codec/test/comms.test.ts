@@ -179,6 +179,30 @@ test("waitlistLaunchCampaign emails subscribed contacts with billing date + link
   }
 });
 
+test("pickupReminderCampaign emails subscribed members with the pickup date", async () => {
+  const fm = mockFetch({
+    "/audiences/aud_1/contacts": {
+      data: [
+        { email: "a@example.com", first_name: "A" },
+        { email: "b@example.com", unsubscribed: true },
+      ],
+    },
+    "/emails": { id: "e" },
+  });
+  try {
+    const sent = await comms().pickupReminderCampaign({
+      pickupOn: "this Friday",
+      details: "Ethiopia Guji, roasted Wednesday.",
+    });
+    assert.equal(sent, 1, "skips unsubscribed contacts");
+    const aMail = emailsTo(fm.calls, "a@example.com")[0]!;
+    assert.match(aMail.body.subject, /this Friday/);
+    assert.match(aMail.body.text, /Ethiopia Guji, roasted Wednesday\./);
+  } finally {
+    fm.restore();
+  }
+});
+
 test("per-client template overrides replace core copy (spec §9)", async () => {
   const fm = mockFetch({
     "/audiences/aud_1/contacts": { id: "c1" },

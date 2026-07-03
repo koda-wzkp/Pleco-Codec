@@ -64,6 +64,19 @@ test("launch template carries the billing date and checkout link", () => {
   assert.match(email.html, /href="https:\/\/pay\.example\/x"/);
 });
 
+test("pickupReminder carries the pickup date and details", () => {
+  const email = defaultTemplates.pickupReminder({
+    venueName: "Outer Heaven Espresso",
+    pickupOn: "this Friday",
+    details: "Ethiopia Guji, roasted Wednesday.",
+    contactEmail: "hello@venue.example",
+  });
+  assert.match(email.subject, /Outer Heaven Espresso/);
+  assert.match(email.subject, /this Friday/);
+  assert.match(email.text, /Ethiopia Guji, roasted Wednesday\./);
+  assert.match(email.text, /hello@venue\.example/);
+});
+
 test("templates escape HTML in interpolated content", () => {
   const email = defaultTemplates.launch({
     venueName: "V",

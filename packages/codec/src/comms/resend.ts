@@ -201,6 +201,37 @@ export class ResendComms {
     return sent;
   }
 
+  /**
+   * Pickup/fulfillment reminder (spec §9): "your pickup is ready {date}." Sent
+   * to the audience's subscribed contacts (active members) on the fulfillment
+   * schedule — OHE's roast→pickup cadence. Same deliberately-simple v1 shape as
+   * the launch campaign: sequential sends, no scheduler. Trigger it manually or
+   * from a cron on the roast calendar. Returns the number of emails sent.
+   */
+  async pickupReminderCampaign(input: {
+    pickupOn: string;
+    details?: string;
+    /** Dry run: render but don't send; returns would-send count. */
+    dryRun?: boolean;
+  }): Promise<number> {
+    const contacts = await this.listContacts();
+    let sent = 0;
+    for (const contact of contacts) {
+      if (contact.unsubscribed) continue;
+      const rendered = this.templates.pickupReminder({
+        venueName: this.opts.venueName,
+        pickupOn: input.pickupOn,
+        details: input.details,
+        contactEmail: this.opts.contactEmail,
+      });
+      if (!input.dryRun) {
+        await this.sendEmail(contact.email, rendered);
+      }
+      sent++;
+    }
+    return sent;
+  }
+
   // ---------------------------------------------------------------- REST
 
   private async upsertContact(input: {
