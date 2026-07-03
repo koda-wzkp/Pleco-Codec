@@ -283,6 +283,15 @@ export class SquareProvider implements BillingProvider {
   // -------------------------------------------------------------- webhook
 
   /**
+   * Instance-method form of the standalone `webhookEventId` export, so the
+   * BillingProvider interface can expose idempotency-id extraction without
+   * callers importing a Square-specific helper. Dedupe on this before dispatch.
+   */
+  webhookEventId(rawBody: string): string | null {
+    return webhookEventId(rawBody);
+  }
+
+  /**
    * Verify and normalize a Square webhook request.
    *
    * Signature: `x-square-hmacsha256-signature` must equal

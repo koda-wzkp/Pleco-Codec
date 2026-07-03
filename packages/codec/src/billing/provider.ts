@@ -36,4 +36,10 @@ export interface BillingProvider {
   checkoutUrl(plan: PlanRef, tier: TierId): string | Promise<string>;
   manageUrl(memberEmail: string): Promise<string>;   // self-serve pause/cancel/card
   parseWebhook(req: Request): Promise<MemberEvent | null>; // verify signature; null = irrelevant event
+  // Extract the processor's stable event id from a raw webhook body so handlers
+  // can dedupe idempotently (processors redeliver — spec §4). Pure parsing: no
+  // network, no secrets. Returns null if the body has no extractable id. Call
+  // this BEFORE parseWebhook (which consumes the request body). Keeping it on
+  // the interface lets the webhook route stay processor-blind.
+  webhookEventId(rawBody: string): string | null;
 }

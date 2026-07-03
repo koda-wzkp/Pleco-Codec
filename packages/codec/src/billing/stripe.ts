@@ -77,4 +77,19 @@ export class StripeProvider implements BillingProvider {
   async parseWebhook(_req: Request): Promise<MemberEvent | null> {
     stub("parseWebhook");
   }
+
+  /**
+   * Stripe events carry a top-level `id` (e.g. "evt_123"). This is pure JSON
+   * parsing — no API call, no secret — so it is implemented even while the rest
+   * of the adapter is stubbed: the webhook route can dedupe processor-blindly
+   * the moment the real parseWebhook lands.
+   */
+  webhookEventId(rawBody: string): string | null {
+    try {
+      const parsed = JSON.parse(rawBody) as { id?: unknown };
+      return typeof parsed.id === "string" ? parsed.id : null;
+    } catch {
+      return null;
+    }
+  }
 }

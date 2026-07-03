@@ -7,7 +7,9 @@ const provider = new StripeProvider({
   webhookSigningSecret: "whsec_test",
 });
 
-test("every StripeProvider method throws NotImplementedError citing spec §7", async () => {
+test("every stubbed StripeProvider method throws NotImplementedError citing spec §7", async () => {
+  // webhookEventId is intentionally excluded — it is real (pure JSON parsing);
+  // see the dedicated test below.
   const attempts: Array<() => Promise<unknown>> = [
     () =>
       provider.createPlan({
@@ -29,6 +31,12 @@ test("every StripeProvider method throws NotImplementedError citing spec §7", a
       return true;
     });
   }
+});
+
+test("webhookEventId extracts Stripe's top-level event id (implemented, not stubbed)", () => {
+  assert.equal(provider.webhookEventId(JSON.stringify({ id: "evt_123" })), "evt_123");
+  assert.equal(provider.webhookEventId("not json"), null);
+  assert.equal(provider.webhookEventId("{}"), null);
 });
 
 test("stub message documents the intended mechanics", async () => {
