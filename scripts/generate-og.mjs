@@ -22,7 +22,7 @@ const html = `<!DOCTYPE html>
   .mark svg{width:100%;height:100%;display:block}
   h1{color:#FAF6EE;font-size:72px;font-weight:500;line-height:1.08;letter-spacing:-0.015em;max-width:18ch}
   .sub{color:#BFE0D7;font-size:30px;font-family:system-ui,sans-serif}
-  .fishwrap{position:absolute;right:-70px;bottom:-50px;width:560px;opacity:.08}
+  .fishwrap{position:absolute;right:-60px;bottom:-60px;width:620px;opacity:.13}
   .fishwrap svg{width:100%;height:auto;fill:#FAF6EE}
 </style></head>
 <body>
@@ -30,7 +30,7 @@ const html = `<!DOCTYPE html>
   <div class="in">
     <div class="mark">${mark}</div>
     <h1>Own your membership program.</h1>
-    <div class="sub">CODEC — one-time build · open source · your rails</div>
+    <div class="sub">Pleco CODEC — one-time build · open source · your rails</div>
   </div>
 </body></html>`;
 
