@@ -38,17 +38,29 @@ The feature set is defined by three real clients:
 - **Living Room Wines** (Portland OR) — operating wine bar, migrating a club
   **off Table22**; self-serve member management is the value. Stripe.
 
-## ⚠️ Deploy note (read before merging to main)
+## ⚠️ Deploy notes (read before merging to main)
 
-The marketing site moved from the repo root into `apps/marketing/`. Its Vercel
-project's **Root Directory must be set to `apps/marketing`** (Vercel → Project →
-Settings → Build & Deployment → Root Directory) or the production build of
-codec.pleco.dev will break on the first deploy after this merges. `vercel.json`
-travels with the app at `apps/marketing/vercel.json`.
+- **Marketing site (`apps/marketing`):** moved from the repo root. Its Vercel
+  project's **Root Directory must be set to `apps/marketing`** (Vercel → Project
+  → Settings → Build & Deployment → Root Directory), or the production build of
+  codec.pleco.dev breaks on the first deploy after this merges. `vercel.json`
+  travels with the app.
+- **Client host (`apps/club-host`):** one Vercel project **per client**, each
+  with Root Directory `apps/club-host`, its own `CODEC_INSTANCE`, and its own
+  secrets. Swap the `@astrojs/node` adapter for `@astrojs/vercel` in
+  `apps/club-host/astro.config.mjs` (one line) before deploying.
 
 ## Status
 
-- `packages/codec` — engine: Square adapter + comms + site components done;
-  Stripe adapter is a stub (built when a Stripe client — Living Room — is
-  scheduled). See the Phase 0 audit for the full gap map.
-- Phase 1 in progress: OHE/Sunset host app on the Square adapter first.
+**Phase 1 (OHE/Sunset target) — built and green.**
+- `packages/codec` — engine: Square adapter, Resend comms (all lifecycle emails
+  incl. pickup reminder), processor-blind site components, `listMembers` +
+  `webhookEventId` on the interface. 43 tests.
+- `apps/club-host` — instance-configurable host: Outer Heaven (direct billing)
+  and Sunset (waitlist→billing) as config; webhook + waitlist routes; customer
+  UI; owner dashboard (members, MRR, 30/60/90, CSV, launch panel). 8 tests.
+- **Stripe adapter is still a stub** — Living Room's build is the next target
+  (implement `StripeProvider` + customer portal, add a `living-room` instance).
+- Out of scope parked in `FUTURE.md`. Before client launch: resolve the Square
+  `// VERIFY:` API strings against a live sandbox, and run the $1-tier
+  webhook→comms test with real credentials (documented in the app README).
