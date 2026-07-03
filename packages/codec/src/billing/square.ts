@@ -15,6 +15,8 @@ import type {
   BillingProvider,
   ClubProgram,
   MemberEvent,
+  MemberRecord,
+  MemberStatus,
   PlanRef,
   TierId,
 } from "./provider.js";
@@ -418,6 +420,54 @@ export class SquareProvider implements BillingProvider {
     return variationId ?? "unknown";
   }
 
+  // ------------------------------------------------------- members (read)
+
+  /**
+   * Live member read for the owner dashboard: paginate SearchSubscriptions for
+   * the location, normalize each to a MemberRecord, and resolve emails via the
+   * Customers API. No local datastore — Square stays the system of record.
+   *
+   * VERIFY (spec §5): endpoint shape and status strings against the current
+   * Square docs before launch. Uses POST /v2/subscriptions/search with a
+   * location filter; statuses PENDING|ACTIVE|PAUSED|CANCELED|DEACTIVATED.
+   */
+  async listMembers(): Promise<MemberRecord[]> {
+    const subs: SquareSubscription[] = [];
+    let cursor: string | undefined;
+    do {
+      const body: Record<string, unknown> = {
+        // VERIFY: query.filter.location_ids is the current filter shape.
+        query: { filter: { location_ids: [this.opts.locationId] } },
+        ...(cursor ? { cursor } : {}),
+      };
+      const res = await this.request("/v2/subscriptions/search", body);
+      for (const s of (res.subscriptions ?? []) as SquareSubscription[]) subs.push(s);
+      cursor = res.cursor;
+    } while (cursor);
+
+    // Resolve emails once per distinct customer (bounded fan-out; launch tier).
+    const emailByCustomer = new Map<string, string | null>();
+    for (const sub of subs) {
+      const id = sub.customer_id;
+      if (id && !emailByCustomer.has(id)) {
+        emailByCustomer.set(id, await this.emailForCustomer(id));
+      }
+    }
+
+    return subs.map((sub) => {
+      const tier = this.tierForSubscription(sub);
+      return {
+        customerId: sub.customer_id ?? "unknown",
+        email: sub.customer_id ? emailByCustomer.get(sub.customer_id) ?? null : null,
+        tier,
+        status: normalizeStatus(sub.status),
+        priceCents: this.tierPrices[tier] ?? null,
+        createdAt: sub.created_at ?? null,
+        canceledAt: sub.canceled_date ?? null,
+      };
+    });
+  }
+
   /**
    * Square subscription webhook payloads carry `customer_id`, not an email;
    * resolve it via the Customers API.
@@ -475,6 +525,22 @@ function cadenceToSquare(cadence: ClubProgram["cadence"]): string {
   }
 }
 
+function normalizeStatus(status: string | undefined): MemberStatus {
+  // VERIFY: Square subscription status strings for the pinned Square-Version.
+  switch (status) {
+    case "ACTIVE":
+      return "active";
+    case "PAUSED":
+      return "paused";
+    case "CANCELED":
+    case "DEACTIVATED":
+      return "canceled";
+    default:
+      // PENDING and any unrecognized status.
+      return "unknown";
+  }
+}
+
 // ------------------------------------------------------- payload typings
 
 interface SquareSubscription {
@@ -482,6 +548,8 @@ interface SquareSubscription {
   status?: string;
   plan_variation_id?: string;
   plan_id?: string;
+  created_at?: string;
+  canceled_date?: string;
 }
 
 interface SquareWebhookPayload {

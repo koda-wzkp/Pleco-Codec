@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "typecheck": "astro check",
-    "test": "node --test \"test/*.test.mjs\""
+    "test": "node --experimental-strip-types --test \"test/*.test.mjs\""
   },
   "dependencies": {
     "@astrojs/node": "^9.0.0",

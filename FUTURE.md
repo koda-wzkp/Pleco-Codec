@@ -27,4 +27,13 @@ here instead of building it.
   processor, the client owns the code and the member list, no platform fee ever.
 
 ## Notes captured during the build
-_(add dated entries here when a tempting out-of-scope idea comes up)_
+- **2026-07-03 — self-serve in-dashboard launch toggle.** The owner dashboard
+  shows launch mode and the one-line config flip that switches waitlist→billing.
+  A live "flip it from the dashboard" button needs a small persisted flag
+  (KV/DB) since the app has no datastore in v1. Deferred: the config flip +
+  redeploy is the launch-tier mechanism. Revisit if a client wants to self-flip.
+- **2026-07-03 — historical MRR across price changes.** Owner MRR + 30/60/90 are
+  computed live from the Square API (current members + signup/cancel dates). If
+  a client later needs MRR reconstructed at past dates *through* price changes,
+  that needs a persisted event log (the webhook already sees every MemberEvent).
+  Deferred with the datastore decision.

@@ -1,0 +1,153 @@
+---
+import Base from '../../layouts/Base.astro';
+import { activeInstance } from '../../instances/index.js';
+import { billingProvider } from '../../lib/providers.js';
+import { computeMetrics, formatMoney, needsAttention } from '../../lib/metrics.js';
+import type { MemberRecord } from 'pleco-codec/billing';
+
+export const prerender = false;
+
+const instance = activeInstance();
+const program = instance.config.program;
+
+let members: MemberRecord[] = [];
+let loadError: string | null = null;
+try {
+  members = await billingProvider(instance).listMembers();
+} catch (e) {
+  loadError = e instanceof Error ? e.message : 'Could not load members.';
+}
+
+const metrics = computeMetrics(members, program.cadence);
+const attention = needsAttention(members);
+const launch = instance.config.launch;
+const tierLabel = (id: string) => program.tiers.find((t) => t.id === id)?.label ?? id;
+---
+<Base title={`${instance.config.venueName} — owner`}>
+  <main>
+    <header class="club-hero" style="padding-bottom:8px">
+      <div class="wrap">
+        <h1 style="font-size:clamp(1.8rem,5vw,2.6rem)">{instance.config.venueName}</h1>
+        <p class="intro">Owner dashboard · {program.name}</p>
+      </div>
+    </header>
+
+    <section style="padding-top:16px">
+      <div class="wrap">
+        {loadError ? (
+          <p class="codec-waitlist-error" role="alert">
+            Couldn’t reach the processor to load members: {loadError}. Check the
+            processor credentials in this deploy’s environment.
+          </p>
+        ) : null}
+
+        <div class="tiles">
+          <div class="tile"><div class="tile-n">{metrics.activeCount}</div><div class="tile-l">Active members</div></div>
+          <div class="tile"><div class="tile-n">{formatMoney(metrics.mrrCents)}</div><div class="tile-l">MRR (monthly)</div></div>
+          <div class="tile"><div class="tile-n">{metrics.pausedCount}</div><div class="tile-l">Paused</div></div>
+          <div class="tile"><div class="tile-n">{metrics.canceledCount}</div><div class="tile-l">Canceled</div></div>
+        </div>
+
+        <h2 class="section-heading" style="margin-top:36px;font-size:1.3rem">Recent trend</h2>
+        <div class="tiles">
+          {metrics.windows.map((w) => (
+            <div class="tile">
+              <div class="tile-n">{w.net >= 0 ? `+${w.net}` : w.net}</div>
+              <div class="tile-l">{w.days}-day net · {w.joined} joined, {w.canceled} left</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="launch-h">
+      <div class="wrap">
+        <h2 class="section-heading" id="launch-h" style="font-size:1.3rem">Launch mode</h2>
+        {launch.mode === 'waitlist' ? (
+          <div class="panel">
+            <p><b>Currently: waitlist.</b> Tier buttons collect founding-member signups; no one is billed yet.</p>
+            {launch.switchover ? <p class="switchover-note">{launch.switchover}</p> : null}
+            <p class="panel-note">
+              To go live: set this club’s <code>launch</code> to
+              <code>{'{ mode: "billing", checkoutUrls: {…} }'}</code> in
+              <code>src/instances/{instance.id}.ts</code> and redeploy. The same
+              tier panels then render as hosted checkout links — no rebuild. A
+              self-serve in-dashboard toggle needs a small persisted flag (see
+              FUTURE.md); the config flip is the launch-tier mechanism.
+            </p>
+          </div>
+        ) : (
+          <div class="panel">
+            <p><b>Currently: billing.</b> Tier buttons send members to hosted checkout on your own processor.</p>
+          </div>
+        )}
+      </div>
+    </section>
+
+    {attention.length ? (
+      <section aria-labelledby="attn-h">
+        <div class="wrap">
+          <h2 class="section-heading" id="attn-h" style="font-size:1.3rem">Needs attention</h2>
+          <p class="panel-note">Paused members, or cancellations in the last 30 days — good candidates for a pickup-night follow-up.</p>
+          <ul class="attn-list">
+            {attention.map((m) => (
+              <li>{m.email ?? m.customerId} · {tierLabel(m.tier)} · <b>{m.status}</b></li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ) : null}
+
+    <section aria-labelledby="members-h">
+      <div class="wrap">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <h2 class="section-heading" id="members-h" style="font-size:1.3rem">Members ({members.length})</h2>
+          <span style="flex:1"></span>
+          <a class="btn-small" href="/owner/members.csv">Export CSV</a>
+          <a class="btn-small ghost" href="/owner/logout">Sign out</a>
+        </div>
+        <div class="table-scroll">
+          <table class="members">
+            <thead><tr><th>Member</th><th>Tier</th><th>Status</th><th>Joined</th></tr></thead>
+            <tbody>
+              {members.map((m) => (
+                <tr>
+                  <td>{m.email ?? m.customerId}</td>
+                  <td>{tierLabel(m.tier)}</td>
+                  <td><span class={`pill pill-${m.status}`}>{m.status}</span></td>
+                  <td>{m.createdAt ? m.createdAt.slice(0, 10) : '—'}</td>
+                </tr>
+              ))}
+              {members.length === 0 && !loadError ? (
+                <tr><td colspan="4" style="color:var(--gray)">No members yet.</td></tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <style>
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 12px; }
+    .tile { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+    .tile-n { font-family: Georgia, serif; font-size: 1.9rem; color: var(--teal-deep); }
+    .tile-l { color: var(--gray); font-size: 0.9rem; margin-top: 4px; }
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px 22px; margin-top: 8px; display: flex; flex-direction: column; gap: 10px; }
+    .panel-note { color: var(--gray); font-size: 0.92rem; line-height: 1.55; }
+    .panel code { background: var(--cream-2); padding: 1px 5px; border-radius: 4px; font-size: 0.85em; }
+    .attn-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+    .attn-list li { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+    .table-scroll { overflow-x: auto; margin-top: 12px; }
+    table.members { width: 100%; border-collapse: collapse; min-width: 480px; }
+    table.members th, table.members td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); font-size: 0.95rem; }
+    table.members th { color: var(--gray); font-weight: 600; }
+    .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; }
+    .pill-active { background: #d9efe7; color: #1f5c4d; }
+    .pill-paused { background: #f2ead2; color: #7a5a1f; }
+    .pill-canceled { background: #f0d9d2; color: #8a3b2f; }
+    .pill-unknown { background: var(--cream-2); color: var(--gray); }
+    .btn-small { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--teal); color: var(--cream); font-weight: 600; text-decoration: none; }
+    .btn-small.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+  </style>
+</Base>

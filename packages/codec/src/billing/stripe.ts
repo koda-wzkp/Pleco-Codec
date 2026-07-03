@@ -28,6 +28,7 @@ import type {
   BillingProvider,
   ClubProgram,
   MemberEvent,
+  MemberRecord,
   PlanRef,
   TierId,
 } from "./provider.js";
@@ -76,6 +77,10 @@ export class StripeProvider implements BillingProvider {
 
   async parseWebhook(_req: Request): Promise<MemberEvent | null> {
     stub("parseWebhook");
+  }
+
+  async listMembers(): Promise<MemberRecord[]> {
+    stub("listMembers");
   }
 
   /**

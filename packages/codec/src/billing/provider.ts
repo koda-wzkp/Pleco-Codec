@@ -31,6 +31,25 @@ export type MemberEvent =
   | { type: "canceled";       email: string; at: string }
   | { type: "payment_failed"; email: string; at: string };
 
+export type MemberStatus = "active" | "paused" | "canceled" | "unknown";
+
+/**
+ * A normalized member row for the OWNER read layer (member list, counts, MRR,
+ * 30/60/90 trend, CSV). Sourced live from the processor — the processor
+ * dashboard stays the system of record; this is a clean read over it, no
+ * parallel members database. `priceCents` is the tier's monthly-normalized
+ * price when known.
+ */
+export interface MemberRecord {
+  customerId: string;
+  email: string | null;
+  tier: TierId;
+  status: MemberStatus;
+  priceCents: number | null;
+  createdAt: string | null;
+  canceledAt: string | null;
+}
+
 export interface BillingProvider {
   createPlan(program: ClubProgram): Promise<PlanRef>;
   checkoutUrl(plan: PlanRef, tier: TierId): string | Promise<string>;
@@ -42,4 +61,8 @@ export interface BillingProvider {
   // this BEFORE parseWebhook (which consumes the request body). Keeping it on
   // the interface lets the webhook route stay processor-blind.
   webhookEventId(rawBody: string): string | null;
+  // Live read of members for the owner dashboard. Reads from the processor
+  // (system of record); no local datastore. Keeping it on the interface lets
+  // the owner UI stay processor-blind.
+  listMembers(): Promise<MemberRecord[]>;
 }

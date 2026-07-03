@@ -330,3 +330,63 @@ test("manageUrl falls back to a mailto built from ownerEmail", async () => {
   assert.ok(url.startsWith("mailto:owner@example.com?"));
   assert.ok(url.includes(encodeURIComponent("m@example.com")));
 });
+
+// ---------------------------------------------------------- listMembers
+
+test("listMembers paginates, normalizes status/tier/price, and resolves emails", async () => {
+  let searchCalls = 0;
+  const fm = mockFetch({
+    "/v2/subscriptions/search": () => {
+      searchCalls++;
+      if (searchCalls === 1) {
+        return {
+          subscriptions: [
+            {
+              customer_id: "C1",
+              status: "ACTIVE",
+              plan_variation_id: "VAR-CLUB-2",
+              created_at: "2026-06-01T00:00:00Z",
+            },
+          ],
+          cursor: "PAGE2",
+        };
+      }
+      return {
+        subscriptions: [
+          {
+            customer_id: "C2",
+            status: "CANCELED",
+            plan_variation_id: "VAR-CLUB-4",
+            created_at: "2026-05-01T00:00:00Z",
+            canceled_date: "2026-06-20T00:00:00Z",
+          },
+        ],
+      };
+    },
+    "/v2/customers/C1": { customer: { email_address: "a@example.com" } },
+    "/v2/customers/C2": { customer: { email_address: "b@example.com" } },
+  });
+  try {
+    const p = provider({
+      tierRefs: { "club-2": "VAR-CLUB-2", "club-4": "VAR-CLUB-4" },
+      tierPrices: { "club-2": 4000, "club-4": 6500 },
+    });
+    const members = await p.listMembers();
+    assert.equal(searchCalls, 2, "followed the pagination cursor");
+    assert.equal(members.length, 2);
+    assert.deepEqual(members[0], {
+      customerId: "C1",
+      email: "a@example.com",
+      tier: "club-2",
+      status: "active",
+      priceCents: 4000,
+      createdAt: "2026-06-01T00:00:00Z",
+      canceledAt: null,
+    });
+    assert.equal(members[1]!.status, "canceled");
+    assert.equal(members[1]!.canceledAt, "2026-06-20T00:00:00Z");
+    assert.equal(members[1]!.priceCents, 6500);
+  } finally {
+    fm.restore();
+  }
+});

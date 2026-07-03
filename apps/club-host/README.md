@@ -27,6 +27,26 @@ acceptance bar ("a new client launches from config alone").
 - `POST /api/waitlist` — waitlist capture. Honeypot drop, email validation,
   owner notification with tier/add-on interest.
 
+## Owner dashboard (`/owner`)
+
+Gated by a shared passcode (`OWNER_PASSCODE`) — sign in at `/owner/login`; a
+correct passcode sets an httpOnly `SameSite=Lax` cookie. The dashboard is a live
+read over the processor (no datastore): active count, monthly-normalized **MRR**,
+paused/canceled counts, a **30/60/90-day net-member trend**, a "needs attention"
+list (paused + recently canceled), the member table, **CSV export**
+(`/owner/members.csv`), and a **launch-mode** panel. It is processor-blind —
+everything comes from `BillingProvider.listMembers()`.
+
+- **Launch toggle:** the panel shows the current mode and the one-line
+  `src/instances/<id>.ts` edit that flips waitlist→billing (then redeploy). A
+  self-serve in-dashboard button needs a persisted flag — see `FUTURE.md`.
+- **CSRF note:** Astro's form-origin check is disabled (`astro.config.mjs`)
+  because it blocks the legitimate login through the node adapter; the login has
+  no CSRF exposure and the `/owner` cookie is `SameSite=Lax`. The JSON routes
+  aren't covered by that check and carry their own protection.
+- Auth is single-shared-passcode by design (one-owner shops). Per-person owner
+  accounts / magic-link sign-in is a scoped follow-on.
+
 ## Run locally
 
 ```sh

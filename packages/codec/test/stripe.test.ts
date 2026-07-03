@@ -22,6 +22,7 @@ test("every stubbed StripeProvider method throws NotImplementedError citing spec
     () => provider.manageUrl("m@example.com"),
     () =>
       provider.parseWebhook(new Request("https://example.com", { method: "POST" })),
+    () => provider.listMembers(),
   ];
   for (const attempt of attempts) {
     await assert.rejects(attempt, (err: unknown) => {
