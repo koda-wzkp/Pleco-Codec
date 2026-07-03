@@ -26,7 +26,7 @@ npm run preview  # serve the build locally
 
 2. **Make this repo public** (or point links at whatever repo is public).
    Every "Repo" / "Browse the source" / terminal `git clone` link points at
-   `https://github.com/koda-wzkp/pleco-codec` (set once as `REPO_URL` in
+   `https://github.com/koda-wzkp/Pleco-Codec` (set once as `REPO_URL` in
    `src/pages/index.astro`). The page's open-source pitch cannot ship against a 404.
 
 3. **Regenerate the OG image** after the real mark lands:
