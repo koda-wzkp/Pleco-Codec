@@ -31,6 +31,9 @@ nav{position:sticky;top:0;z-index:20;background:rgba(250,246,238,0.86);backdrop-
 .brand{display:inline-flex;align-items:center;gap:11px;font-family:"IBM Plex Serif",Georgia,serif;font-size:20px;font-weight:600;color:var(--ink);padding:8px 0;min-height:44px}
 .brand:hover{text-decoration:none}
 .brand svg{width:30px;height:30px;display:block}
+.wm{display:inline-flex;align-items:baseline;gap:0.32em}
+.wm-pleco{font-weight:500}
+.wm-codec{font-weight:600;letter-spacing:0.02em}
 .nav-sp{flex:1}
 .nav-links{display:flex;gap:14px;align-items:center;font-size:15px}
 .nav-links a{color:var(--ink);font-weight:500;padding:11px 6px;display:inline-flex;align-items:center;min-height:44px}
@@ -50,7 +53,7 @@ nav{position:sticky;top:0;z-index:20;background:rgba(250,246,238,0.86);backdrop-
 .btn-primary:hover{background:var(--teal-deep);text-decoration:none}
 .btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .btn-ghost:hover{border-color:var(--teal);color:var(--teal-deep);text-decoration:none}
-.hero-fish{position:absolute;right:-60px;bottom:-30px;width:min(46vw,520px);opacity:0.06;pointer-events:none}
+.hero-fish{position:absolute;right:-40px;bottom:-40px;width:min(52vw,620px);opacity:0.14;pointer-events:none}
 .hero-fish svg{width:100%;height:auto;display:block;fill:var(--teal)}
 
 /* ---------- section scaffold ---------- */
@@ -138,7 +141,7 @@ footer{background:var(--ink);color:#B4B0A8;padding:40px 0;position:relative;over
 .foot-in .brand svg{width:26px;height:26px}
 .foot-sp{flex:1}
 .foot-in a{color:#CFE6DF;font-size:14px;padding:11px 4px;display:inline-flex;align-items:center;min-height:44px}
-.foot-fish{position:absolute;right:-30px;top:-40px;width:230px;opacity:0.08;z-index:1}
+.foot-fish{position:absolute;right:-20px;top:-30px;width:300px;opacity:0.16;z-index:1}
 .foot-fish svg{fill:var(--cream);width:100%}
 
 /* ---------- reveal (FIX 2: fail-safe progressive enhancement) ----------

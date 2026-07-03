@@ -1,4 +1,4 @@
-<svg viewBox="0 0 520 120" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <mask id="r">
       <rect width="120" height="120" fill="white"/>
@@ -18,5 +18,4 @@
       <path d="M96 0V121H287V1372H96V1493H946Q1195 1493 1342.0 1374.5Q1489 1256 1489 1057Q1489 857 1341.5 737.5Q1194 618 946 618H672V121H913V0ZM672 739H784Q914 739 991.5 825.5Q1069 912 1069 1057Q1069 1201 992.0 1286.5Q915 1372 784 1372H672Z" fill="#2D7A6B"/>
     </g>
   </g>
-  <text x="150" y="92" font-family="Georgia, 'Times New Roman', serif" font-size="80" font-weight="500" fill="#2A2825" letter-spacing="-1">Pleco</text>
 </svg>

@@ -3,18 +3,20 @@
     <mask id="r">
       <rect width="120" height="120" fill="white"/>
       <g stroke="black" stroke-width="4" stroke-linecap="round">
-        <line x1="60" y1="130" x2="5" y2="55"/>
-        <line x1="60" y1="130" x2="10" y2="10"/>
-        <line x1="60" y1="130" x2="42" y2="-5"/>
-        <line x1="60" y1="130" x2="78" y2="-5"/>
-        <line x1="60" y1="130" x2="105" y2="5"/>
-        <line x1="60" y1="130" x2="125" y2="35"/>
-        <line x1="60" y1="130" x2="130" y2="80"/>
+        <line x1="65" y1="130" x2="10" y2="55"/>
+        <line x1="65" y1="130" x2="15" y2="10"/>
+        <line x1="65" y1="130" x2="47" y2="-5"/>
+        <line x1="65" y1="130" x2="83" y2="-5"/>
+        <line x1="65" y1="130" x2="110" y2="5"/>
+        <line x1="65" y1="130" x2="130" y2="35"/>
+        <line x1="65" y1="130" x2="135" y2="80"/>
       </g>
     </mask>
   </defs>
   <g mask="url(#r)">
-    <text x="60" y="105" font-family="Georgia, 'Times New Roman', serif" font-size="155" font-weight="500" text-anchor="middle" fill="#FAF6EE">P</text>
+    <g transform="translate(11.92, 110) scale(0.06698, -0.06698)">
+      <path d="M96 0V121H287V1372H96V1493H946Q1195 1493 1342.0 1374.5Q1489 1256 1489 1057Q1489 857 1341.5 737.5Q1194 618 946 618H672V121H913V0ZM672 739H784Q914 739 991.5 825.5Q1069 912 1069 1057Q1069 1201 992.0 1286.5Q915 1372 784 1372H672Z" fill="#FAF6EE"/>
+    </g>
   </g>
   <text x="150" y="92" font-family="Georgia, 'Times New Roman', serif" font-size="80" font-weight="500" fill="#FAF6EE" letter-spacing="-1">Pleco</text>
 </svg>

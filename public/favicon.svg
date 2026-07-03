@@ -15,8 +15,8 @@
     </mask>
   </defs>
   <g mask="url(#r)">
-    <text x="65" y="101" font-family="'IBM Plex Serif', Georgia, serif"
-          font-size="138" font-weight="600" text-anchor="middle"
-          fill="#FAF6EE">P</text>
+    <g transform="translate(11.92, 110) scale(0.06698, -0.06698)">
+      <path d="M96 0V121H287V1372H96V1493H946Q1195 1493 1342.0 1374.5Q1489 1256 1489 1057Q1489 857 1341.5 737.5Q1194 618 946 618H672V121H913V0ZM672 739H784Q914 739 991.5 825.5Q1069 912 1069 1057Q1069 1201 992.0 1286.5Q915 1372 784 1372H672Z" fill="#FAF6EE"/>
+    </g>
   </g>
 </svg>
