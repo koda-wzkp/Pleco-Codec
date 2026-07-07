@@ -37,6 +37,39 @@ If the brand kit updates, re-copy those two files and run
    `node scripts/generate-og.mjs` locally (or on a machine with network access)
    before launch. The mark itself renders correctly either way.
 
+## Guide funnel (`/guide`)
+
+The "Own Your Club" ebook funnel: a lead-capture landing page, a Vercel
+serverless function, and a thank-you page. It's the only dynamic part of an
+otherwise fully static site.
+
+- **`src/pages/guide.astro`** — landing page. Pitch + 6-chapter list + one-field
+  email form. Progressive-enhancement: the `<form>` natively POSTs to
+  `/api/guide` (works with JS off, redirecting to `/guide/thanks`); with JS it
+  submits via `fetch` and reveals an inline success panel. Includes an
+  off-screen honeypot (`company`) as a spam guard.
+- **`api/guide.js`** — Vercel Function (Node). Validates the email server-side,
+  rejects honeypot hits, then uses **Resend** to (1) email the requester a link
+  to `public/Own-Your-Club-ebook.pdf` and (2) notify Koda of the new lead
+  (reply-to = the lead). No database — the lead list lives in the inbox. Vercel
+  auto-detects the `api/` directory, so the site stays static.
+- **`src/pages/guide/thanks.astro`** — confirmation + ungated direct download +
+  warm CTA (`hello@pleco.dev`).
+
+### Required env vars (set in Vercel → Project → Settings → Environment Variables)
+
+| Variable | Purpose | Default if unset |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Resend secret key. **Required** — no key, no email. | — (function returns a generic failure) |
+| `GUIDE_FROM` | Verified Resend sender, e.g. `Pleco CODEC <guide@pleco.dev>`. The domain must be verified in Resend. | `Pleco CODEC <guide@pleco.dev>` |
+| `CONTACT_EMAIL` | The human address Conor talks to leads from. Used as the guide email's reply-to and as the default lead-notification inbox. | `conor@pleco.dev` |
+| `LEAD_NOTIFY_TO` | Inbox that receives lead notifications. | `CONTACT_EMAIL` |
+| `SITE_URL` | Public origin used to build the PDF link. | `https://codec.pleco.dev` |
+
+The key lives only in Vercel env, never in the repo. After setting the vars,
+**test end-to-end with a real address**: submit the form → confirm the guide
+email arrives → confirm the lead notification lands in `LEAD_NOTIFY_TO`.
+
 ## Design notes
 
 - The visual/copy source of truth is the reference design (`codec-pleco-dev.html`).
@@ -53,5 +86,7 @@ If the brand kit updates, re-copy those two files and run
 
 ## Deploy
 
-Vercel auto-detects Astro; no adapter needed (fully static output).
-Assign the `codec.pleco.dev` domain to this project in the Vercel dashboard.
+Vercel auto-detects Astro; no adapter needed. The site builds to static output
+in `dist/`, and the `api/` directory is deployed as a serverless function
+alongside it (see the guide funnel section for the env vars it needs). Assign
+the `codec.pleco.dev` domain to this project in the Vercel dashboard.

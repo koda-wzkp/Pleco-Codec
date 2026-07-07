@@ -1,0 +1,79 @@
+---
+import '../../styles/global.css';
+// Same real brand assets, same inline-symbol pattern as the rest of the site.
+import pmarkRaw from '../../assets/brand/logo-teal-square.svg?raw';
+import fishRaw from '../../assets/brand/pleco-fish.svg?raw';
+
+const inner = (svg: string) => svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+const pmarkInner = inner(pmarkRaw);
+const fishInner = inner(fishRaw).replace(/\s*fill="[^"]*"/, '');
+
+const EBOOK_URL = '/Own-Your-Club-ebook.pdf';
+const HOME_URL = 'https://codec.pleco.dev/';
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#FAF6EE" />
+<title>The guide is on its way — CODEC</title>
+<meta name="description" content="Your copy of Own Your Club is on its way. Download it directly here, too." />
+<link rel="canonical" href="https://codec.pleco.dev/guide/thanks" />
+<meta name="robots" content="noindex" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="pmark" viewBox="0 0 120 120"><Fragment set:html={pmarkInner} /></symbol>
+  <symbol id="fish" viewBox="0 0 1000 511"><Fragment set:html={fishInner} /></symbol>
+</svg>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <span class="nav-sp"></span>
+    <div class="nav-links">
+      <a href={HOME_URL}>← Back to codec.pleco.dev</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="guide-hero thanks-hero">
+    <div class="guide-fish"><svg aria-hidden="true"><use href="#fish" /></svg></div>
+    <div class="wrap thanks-wrap">
+      <div class="check" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <p class="eyebrow">You’re in</p>
+      <h1>The guide is on its way.</h1>
+      <p class="lede">Check your inbox — <strong>Own Your Club</strong> is heading there now. Give it a minute, and peek in spam if it’s playing shy.</p>
+
+      <div class="thanks-dl">
+        <p>No need to wait on email, though — grab it right here:</p>
+        <a class="btn btn-primary" href={EBOOK_URL} download>Download the guide (PDF)</a>
+      </div>
+
+      <p class="thanks-next">Read enough to be curious? Ready to talk about a club for your own business? <a href="mailto:conor@pleco.dev?subject=CODEC%20for%20my%20shop">conor@pleco.dev</a> — happy to talk it through.</p>
+    </div>
+  </header>
+</main>
+
+<footer>
+  <div class="foot-fish"><svg aria-hidden="true"><use href="#fish" /></svg></div>
+  <div class="wrap foot-in">
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <span class="foot-sp"></span>
+    <a href="https://pleco.dev">pleco.dev</a>
+    <a href="mailto:hello@pleco.dev">hello@pleco.dev</a>
+    <a href="https://github.com/koda-wzkp/Pleco-Codec">GitHub</a>
+  </div>
+</footer>
+</body>
+</html>

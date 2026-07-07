@@ -155,3 +155,70 @@ html.js .reveal.in{opacity:1;transform:none}
   html{scroll-behavior:auto}
   html.js .reveal{opacity:1;transform:none;transition:none}
 }
+
+/* ============================================================
+   Guide funnel — /guide (landing) and /guide/thanks
+   One more page in the existing site; same tokens, no new look.
+   ============================================================ */
+.guide-hero{position:relative;overflow:hidden;padding:64px 0 84px}
+.guide-fish{position:absolute;right:-60px;bottom:-50px;width:min(48vw,560px);opacity:0.12;pointer-events:none}
+.guide-fish svg{width:100%;height:auto;display:block;fill:var(--teal)}
+.guide-grid{position:relative;z-index:2;display:grid;grid-template-columns:1.15fr 0.85fr;gap:56px;align-items:start}
+
+/* pitch column */
+.guide-pitch h1{font-size:clamp(2.3rem,5.4vw,3.7rem);max-width:15ch;margin-top:6px}
+.guide-pitch h1 .teal{color:var(--teal)}
+.guide-pitch .lede{font-size:clamp(1.02rem,1.8vw,1.18rem);color:var(--gray);max-width:52ch;margin-top:22px;line-height:1.55}
+.learn-title{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;letter-spacing:0.13em;text-transform:uppercase;color:var(--teal);margin-top:34px;margin-bottom:14px}
+.learn{list-style:none;display:flex;flex-direction:column;gap:11px;max-width:50ch}
+.learn li{display:flex;gap:11px;align-items:flex-start;line-height:1.45;font-size:1rem;color:var(--ink)}
+.learn li::before{content:"";flex:none;width:7px;height:7px;border-radius:50%;background:var(--teal);margin-top:8px}
+.trust{margin-top:30px;font-size:0.95rem;color:var(--gray);max-width:48ch}
+
+/* capture card */
+.guide-card{position:relative}
+.capture,.capture-done{background:#fff;border:1px solid var(--line);border-radius:16px;padding:30px 28px;box-shadow:0 24px 60px -40px rgba(45,122,107,0.45)}
+.capture{position:sticky;top:84px}
+.capture h2,.capture-done h2{font-size:1.5rem;line-height:1.15}
+.capture-sub{color:var(--gray);font-size:0.98rem;margin-top:8px;margin-bottom:22px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
+.field label{font-size:0.9rem;font-weight:500;color:var(--ink)}
+.field input{font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:16px;color:var(--ink);background:var(--cream);border:1.5px solid var(--line);border-radius:9px;padding:13px 14px;min-height:48px;width:100%}
+.field input::placeholder{color:#A8A49B}
+.field input:hover{border-color:#CFC6B4}
+.field input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(45,122,107,0.16);background:#fff}
+.field input:user-invalid{border-color:var(--copper)}
+.guide-card .btn-primary{width:100%;justify-content:center;font-size:16px;padding:14px 22px}
+.guide-card .btn-primary:disabled{opacity:0.65;cursor:not-allowed}
+.form-note{font-size:0.85rem;color:var(--gray);line-height:1.5;margin-top:16px}
+.form-error{font-size:0.92rem;color:#8A3B1E;background:#F7E9E1;border:1px solid #E4C4B2;border-radius:9px;padding:11px 13px;margin-bottom:16px}
+
+/* honeypot — off-screen, out of tab order, hidden from AT */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* success states (inline card + thank-you page) */
+.check{width:52px;height:52px;border-radius:50%;background:rgba(45,122,107,0.12);color:var(--teal);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.check svg{width:28px;height:28px}
+.capture-done .done-dl{margin-top:16px;font-size:1rem}
+.capture-done p{color:var(--gray);margin-top:10px;font-size:0.98rem;line-height:1.55}
+.capture-done .done-dl a,.capture-done .done-next a{font-weight:500}
+.capture-done .done-next{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:0.95rem}
+
+/* thank-you page */
+.thanks-hero{padding:80px 0 96px}
+.thanks-wrap{position:relative;z-index:2;max-width:60ch}
+.thanks-wrap h1{font-size:clamp(2.2rem,5.2vw,3.4rem);margin-top:8px}
+.thanks-wrap .lede{font-size:clamp(1.05rem,2vw,1.25rem);color:var(--gray);margin-top:20px;max-width:48ch;line-height:1.5}
+.thanks-dl{margin-top:34px;padding:24px 26px;background:#fff;border:1px solid var(--line);border-radius:14px;max-width:44ch}
+.thanks-dl p{color:var(--gray);font-size:0.98rem;margin-bottom:16px}
+.thanks-next{margin-top:30px;color:var(--gray);font-size:1rem;max-width:50ch;line-height:1.55}
+
+@media(max-width:860px){
+  .guide-grid{grid-template-columns:1fr;gap:40px}
+  .capture{position:static}
+  .guide-pitch h1{max-width:18ch}
+}
+@media(max-width:480px){
+  .guide-hero{padding:44px 0 64px}
+  .capture,.capture-done{padding:24px 20px}
+}
