@@ -22,6 +22,15 @@ const metrics = computeMetrics(members, program.cadence);
 const attention = needsAttention(members);
 const launch = instance.config.launch;
 const tierLabel = (id: string) => program.tiers.find((t) => t.id === id)?.label ?? id;
+
+// Flash message from the pickup-reminder action (?pickup=sent:N | error:msg).
+const pickupFlash = Astro.url.searchParams.get('pickup');
+let pickupMsg: { kind: 'ok' | 'err'; text: string } | null = null;
+if (pickupFlash?.startsWith('sent:')) {
+  pickupMsg = { kind: 'ok', text: `Pickup reminder sent to ${pickupFlash.slice(5)} member(s).` };
+} else if (pickupFlash?.startsWith('error:')) {
+  pickupMsg = { kind: 'err', text: `Couldn’t send: ${pickupFlash.slice(6)}` };
+}
 ---
 <Base title={`${instance.config.venueName} — owner`}>
   <main>
@@ -81,6 +90,27 @@ const tierLabel = (id: string) => program.tiers.find((t) => t.id === id)?.label 
             <p><b>Currently: billing.</b> Tier buttons send members to hosted checkout on your own processor.</p>
           </div>
         )}
+      </div>
+    </section>
+
+    <section aria-labelledby="pickup-h">
+      <div class="wrap">
+        <h2 class="section-heading" id="pickup-h" style="font-size:1.3rem">Send a pickup reminder</h2>
+        <p class="panel-note">Emails every active member that their pickup is ready — send it on the roast/fulfillment schedule.</p>
+        {pickupMsg ? (
+          <p class={pickupMsg.kind === 'ok' ? 'flash-ok' : 'flash-err'} role="status">{pickupMsg.text}</p>
+        ) : null}
+        <form method="POST" action="/owner/pickup-reminder" class="pickup-form">
+          <label class="codec-waitlist-field">
+            <span class="codec-waitlist-label">Pickup date / window</span>
+            <input type="text" name="pickupOn" placeholder="this Friday, 3–7pm" required />
+          </label>
+          <label class="codec-waitlist-field">
+            <span class="codec-waitlist-label">Details (optional)</span>
+            <input type="text" name="details" placeholder="Ethiopia Guji, roasted Wednesday" />
+          </label>
+          <button type="submit" class="btn-small" style="align-self:flex-start">Send reminder</button>
+        </form>
       </div>
     </section>
 
@@ -147,7 +177,11 @@ const tierLabel = (id: string) => program.tiers.find((t) => t.id === id)?.label 
     .pill-paused { background: #f2ead2; color: #7a5a1f; }
     .pill-canceled { background: #f0d9d2; color: #8a3b2f; }
     .pill-unknown { background: var(--cream-2); color: var(--gray); }
-    .btn-small { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--teal); color: var(--cream); font-weight: 600; text-decoration: none; }
+    .btn-small { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 16px; border-radius: 10px; background: var(--teal); color: var(--cream); font-weight: 600; text-decoration: none; border: 0; font-size: 0.95rem; cursor: pointer; }
     .btn-small.ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+    .pickup-form { display: flex; flex-direction: column; gap: 14px; max-width: 460px; margin-top: 12px; }
+    .pickup-form input { min-height: 44px; padding: 10px 12px; font-size: 16px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); }
+    .flash-ok { background: #d9efe7; color: #1f5c4d; padding: 12px 14px; border-radius: 10px; margin: 10px 0; }
+    .flash-err { background: #f0d9d2; color: #8a3b2f; padding: 12px 14px; border-radius: 10px; margin: 10px 0; }
   </style>
 </Base>

@@ -32,6 +32,21 @@ acceptance bar ("a new client launches from config alone").
   the route calls `BillingProvider.manageUrl(email)` and redirects (Stripe billing
   portal / Square account page / mailto fallback). Never names a processor.
 
+## Provisioning a client (one-time)
+
+Run once with the client's processor credentials to create the plan and generate
+the hosted checkout links, then paste the two outputs:
+
+```sh
+cp .env.example .env         # fill in the processor + Resend secrets
+CODEC_INSTANCE=outer-heaven npm run provision --workspace @pleco/club-host
+```
+
+It prints (1) the `SQUARE_TIER_REFS` / `STRIPE_TIER_REFS` env line and (2) the
+`checkoutUrls` block for the instance's `launch` config. Flip `launch.mode` to
+`billing` and redeploy — that's the whole go-live. Processor-blind (only the env
+var name differs by processor).
+
 ## Owner dashboard (`/owner`)
 
 Gated by a shared passcode (`OWNER_PASSCODE`) — sign in at `/owner/login`; a
@@ -42,6 +57,9 @@ list (paused + recently canceled), the member table, **CSV export**
 (`/owner/members.csv`), and a **launch-mode** panel. It is processor-blind —
 everything comes from `BillingProvider.listMembers()`.
 
+- **Pickup reminder:** an owner action ("Send a pickup reminder" — date +
+  optional details) that emails every active member via the core pickup template.
+  Send it on the roast/fulfillment schedule. Flashes the sent count.
 - **Launch toggle:** the panel shows the current mode and the one-line
   `src/instances/<id>.ts` edit that flips waitlist→billing (then redeploy). A
   self-serve in-dashboard button needs a persisted flag — see `FUTURE.md`.
