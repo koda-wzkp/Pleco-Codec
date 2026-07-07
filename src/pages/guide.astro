@@ -1,0 +1,204 @@
+---
+import '../styles/global.css';
+// Reuse the real brand assets exactly as index.astro does: inline each SVG's
+// inner markup into a reusable <symbol>, referenced via <use> (FIX 1).
+import pmarkRaw from '../assets/brand/logo-teal-square.svg?raw';
+import fishRaw from '../assets/brand/pleco-fish.svg?raw';
+
+const inner = (svg: string) => svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+const pmarkInner = inner(pmarkRaw);
+const fishInner = inner(fishRaw).replace(/\s*fill="[^"]*"/, '');
+
+const EBOOK_URL = '/Own-Your-Club-ebook.pdf';
+const HOME_URL = 'https://codec.pleco.dev/';
+
+const chapters = [
+  'The platform tax — what 10% really costs',
+  'Own the appliance — a different way to think about it',
+  'Is it secure? — the honest answer',
+  'What maintenance actually is',
+  'Hiring a developer — you’re never trapped',
+  'Owning your club — how to start',
+];
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- FIX 2: light-only; never auto-invert in webviews -->
+<meta name="color-scheme" content="light" />
+<meta name="theme-color" content="#FAF6EE" />
+<title>Own Your Club — the free guide | CODEC</title>
+<meta name="description" content="A short, honest guide to running membership and club programs on rails you own instead of renting them. Free PDF — the platform-tax math, the ownership case, security, maintenance, and how to hire a dev." />
+<link rel="canonical" href="https://codec.pleco.dev/guide" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta property="og:title" content="Own Your Club — the free guide" />
+<meta property="og:description" content="The platform-tax math, the ownership case, security, maintenance, and how to hire a dev. Free PDF." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://codec.pleco.dev/guide" />
+<meta property="og:image" content="https://codec.pleco.dev/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<script is:inline>
+  // FIX 2: reveal only arms when JS + IntersectionObserver are present and the
+  // user hasn't asked for reduced motion. Without html.js, .reveal stays visible.
+  if ('IntersectionObserver' in window &&
+      !(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    document.documentElement.classList.add('js');
+  }
+</script>
+</head>
+<body>
+
+<!-- Brand symbols (real assets), defined once and referenced via <use>. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="pmark" viewBox="0 0 120 120"><Fragment set:html={pmarkInner} /></symbol>
+  <symbol id="fish" viewBox="0 0 1000 511"><Fragment set:html={fishInner} /></symbol>
+</svg>
+
+<nav>
+  <div class="wrap nav-in">
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <span class="nav-sp"></span>
+    <div class="nav-links">
+      <a href={HOME_URL}>← Back to codec.pleco.dev</a>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="guide-hero">
+    <div class="guide-fish"><svg aria-hidden="true"><use href="#fish" /></svg></div>
+    <div class="wrap guide-grid">
+
+      <!-- Pitch -->
+      <div class="guide-pitch">
+        <p class="eyebrow">Free guide · PDF</p>
+        <h1>Own your club — <span class="teal">don’t rent it.</span></h1>
+        <p class="lede">A short, honest read for anyone weighing a membership or club program: run it on rails you own instead of renting them from a platform that takes ~10% of every member, every month, forever. It works out the platform-tax math, makes the ownership case, and answers the fair questions — is it secure, what’s the upkeep, and how do you hire someone to maintain it.</p>
+
+        <p class="learn-title">What you’ll learn</p>
+        <ul class="learn">
+          {chapters.map((c) => <li>{c}</li>)}
+        </ul>
+
+        <p class="trust">From <a href={HOME_URL}>Pleco / CODEC</a> — the same folks who build these clubs. Written by Conor. No pitch, just the honest case.</p>
+      </div>
+
+      <!-- Capture card -->
+      <div class="guide-card">
+        <div class="capture" id="capture">
+          <h2>Send me the guide</h2>
+          <p class="capture-sub">One email and it’s on its way. That’s the whole form.</p>
+
+          <p class="form-error" id="form-error" role="alert" hidden>That didn’t go through. Mind trying once more?</p>
+
+          <form id="guide-form" method="POST" action="/api/guide" novalidate>
+            <div class="field">
+              <label for="email">Your email</label>
+              <input id="email" name="email" type="email" inputmode="email" autocomplete="email"
+                     required placeholder="you@yourshop.com" spellcheck="false" />
+            </div>
+
+            <!-- Honeypot: off-screen, hidden from AT and keyboard. Bots fill it; humans don't. -->
+            <div class="hp" aria-hidden="true">
+              <label for="company">Company (leave this empty)</label>
+              <input id="company" name="company" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="submit">Email me the guide</button>
+          </form>
+
+          <p class="form-note">The guide, free. No spam — I’ll email you the PDF and occasionally something useful. Unsubscribe anytime.</p>
+        </div>
+
+        <!-- Inline success (revealed by JS on a 200; no-JS success lands on /guide/thanks). -->
+        <div class="capture-done" id="capture-done" hidden>
+          <div class="check" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h2>Check your email — the guide is on its way.</h2>
+          <p>It’s heading to <span id="done-email">your inbox</span>. Give it a minute; check spam if it’s shy.</p>
+          <p class="done-dl">Don’t want to wait? <a href={EBOOK_URL} download>Download the PDF now →</a></p>
+          <p class="done-next">Ready to talk about a club for your business? <a href="mailto:hello@pleco.dev?subject=CODEC%20for%20my%20shop">hello@pleco.dev</a></p>
+        </div>
+      </div>
+
+    </div>
+  </header>
+</main>
+
+<footer>
+  <div class="foot-fish"><svg aria-hidden="true"><use href="#fish" /></svg></div>
+  <div class="wrap foot-in">
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <span class="foot-sp"></span>
+    <a href="https://pleco.dev">pleco.dev</a>
+    <a href="mailto:hello@pleco.dev">hello@pleco.dev</a>
+    <a href="https://github.com/koda-wzkp/Pleco-Codec">GitHub</a>
+  </div>
+</footer>
+
+<script is:inline>
+  (function () {
+    var form = document.getElementById('guide-form');
+    if (!form || !window.fetch) return; // no JS / no fetch → native POST fallback works
+
+    var emailEl = document.getElementById('email');
+    var submit = document.getElementById('submit');
+    var errEl = document.getElementById('form-error');
+    var capture = document.getElementById('capture');
+    var done = document.getElementById('capture-done');
+    var doneEmail = document.getElementById('done-email');
+
+    // Surface a no-JS-fallback failure that redirected back here with ?error=1.
+    try {
+      if (new URLSearchParams(window.location.search).get('error') === '1') {
+        errEl.hidden = false;
+      }
+    } catch (e) {}
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      errEl.hidden = true;
+
+      var email = (emailEl.value || '').trim();
+      // Let the native validation UI handle empties/format so keyboard users
+      // get the browser's built-in messaging.
+      if (!emailEl.checkValidity()) { emailEl.reportValidity(); return; }
+
+      submit.disabled = true;
+      var label = submit.textContent;
+      submit.textContent = 'Sending…';
+
+      fetch('/api/guide', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ email: email, company: document.getElementById('company').value || '' })
+      })
+        .then(function (r) { return r.ok; })
+        .then(function (ok) {
+          if (!ok) throw new Error('send failed');
+          if (doneEmail) doneEmail.textContent = email;
+          capture.hidden = true;
+          done.hidden = false;
+          done.setAttribute('tabindex', '-1');
+          done.focus();
+        })
+        .catch(function () {
+          errEl.hidden = false;
+          submit.disabled = false;
+          submit.textContent = label;
+          errEl.setAttribute('tabindex', '-1');
+          errEl.focus();
+        });
+    });
+  })();
+</script>
+</body>
+</html>
