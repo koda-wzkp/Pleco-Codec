@@ -13,11 +13,13 @@ A client = **one object** in `src/instances/` (see `outer-heaven.ts`,
 scope) plus page copy. **No route or page code changes per client** — that's the
 acceptance bar ("a new client launches from config alone").
 
-- **Outer Heaven** — `launch.mode: "billing"`; tier CTAs are hosted Square
-  checkout links. Direct-to-billing.
-- **Sunset** — `launch.mode: "waitlist"`; tier CTAs point at the on-page
-  waitlist form. Flip the `launch` block to `billing` at go-live — that one edit
-  is the whole waitlist→billing switchover, no rebuild.
+- **Outer Heaven** (`outer-heaven`) — Square, `launch.mode: "billing"`; tier CTAs
+  are hosted Square checkout links. Direct-to-billing.
+- **Sunset** (`sunset`) — Square, `launch.mode: "waitlist"`; tier CTAs point at
+  the on-page waitlist form. Flip the `launch` block to `billing` at go-live —
+  that one edit is the whole waitlist→billing switchover, no rebuild.
+- **Living Room** (`living-room`) — Stripe, `launch.mode: "billing"`; Table22
+  migration. Members self-serve via the Stripe billing portal (see `/manage`).
 
 ## Routes
 
@@ -26,6 +28,9 @@ acceptance bar ("a new client launches from config alone").
   `MemberEvent`, fans out to Resend (member email + owner notify). Processor-blind.
 - `POST /api/waitlist` — waitlist capture. Honeypot drop, email validation,
   owner notification with tier/add-on interest.
+- `/manage` — processor-blind member self-management. Member enters their email;
+  the route calls `BillingProvider.manageUrl(email)` and redirects (Stripe billing
+  portal / Square account page / mailto fallback). Never names a processor.
 
 ## Owner dashboard (`/owner`)
 
