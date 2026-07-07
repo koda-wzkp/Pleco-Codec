@@ -62,7 +62,8 @@ otherwise fully static site.
 | --- | --- | --- |
 | `RESEND_API_KEY` | Resend secret key. **Required** — no key, no email. | — (function returns a generic failure) |
 | `GUIDE_FROM` | Verified Resend sender, e.g. `Pleco CODEC <guide@pleco.dev>`. The domain must be verified in Resend. | `Pleco CODEC <guide@pleco.dev>` |
-| `LEAD_NOTIFY_TO` | Inbox that receives lead notifications. | `hello@pleco.dev` |
+| `CONTACT_EMAIL` | The human address Conor talks to leads from. Used as the guide email's reply-to and as the default lead-notification inbox. | `conor@pleco.dev` |
+| `LEAD_NOTIFY_TO` | Inbox that receives lead notifications. | `CONTACT_EMAIL` |
 | `SITE_URL` | Public origin used to build the PDF link. | `https://codec.pleco.dev` |
 
 The key lives only in Vercel env, never in the repo. After setting the vars,

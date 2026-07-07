@@ -10,14 +10,22 @@
 // Required env (set in Vercel, never in the repo):
 //   RESEND_API_KEY   – Resend secret key
 //   GUIDE_FROM       – verified sender, e.g. "Pleco CODEC <guide@pleco.dev>"
-//   LEAD_NOTIFY_TO   – where lead notifications go (defaults to hello@pleco.dev)
+//   CONTACT_EMAIL    – the human address Conor talks to leads from (defaults to
+//                      conor@pleco.dev). Used as the guide's reply-to and as the
+//                      default inbox for lead notifications below.
+//   LEAD_NOTIFY_TO   – where lead notifications go (defaults to CONTACT_EMAIL)
 //   SITE_URL         – public origin for the PDF link (defaults to prod)
 import { Resend } from 'resend';
 
 const SITE_URL = (process.env.SITE_URL || 'https://codec.pleco.dev').replace(/\/$/, '');
 const EBOOK_PATH = '/Own-Your-Club-ebook.pdf';
 const GUIDE_FROM = process.env.GUIDE_FROM || 'Pleco CODEC <guide@pleco.dev>';
-const LEAD_NOTIFY_TO = process.env.LEAD_NOTIFY_TO || 'hello@pleco.dev';
+// One human address for the whole warm-lead conversation. Notifications land
+// here (so a Gmail "reply from the same address the message was sent to" sends
+// as conor@), and it's the reply-to on the guide email so a lead's reply
+// reaches Conor directly too.
+const CONTACT_EMAIL = process.env.CONTACT_EMAIL || 'conor@pleco.dev';
+const LEAD_NOTIFY_TO = process.env.LEAD_NOTIFY_TO || CONTACT_EMAIL;
 
 // Deliberately forgiving but real: something@something.tld, no spaces.
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -83,6 +91,7 @@ export default async function handler(req, res) {
     const delivery = await resend.emails.send({
       from: GUIDE_FROM,
       to: email,
+      replyTo: CONTACT_EMAIL,
       subject: 'Your copy of “Own Your Club”',
       text:
         `Thanks for grabbing the guide.\n\n` +
