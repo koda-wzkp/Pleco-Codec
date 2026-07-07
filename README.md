@@ -52,15 +52,15 @@ The feature set is defined by three real clients:
 
 ## Status
 
-**Phase 1 (OHE/Sunset target) — built and green.**
-- `packages/codec` — engine: Square adapter, Resend comms (all lifecycle emails
-  incl. pickup reminder), processor-blind site components, `listMembers` +
-  `webhookEventId` on the interface. 43 tests.
-- `apps/club-host` — instance-configurable host: Outer Heaven (direct billing)
-  and Sunset (waitlist→billing) as config; webhook + waitlist routes; customer
-  UI; owner dashboard (members, MRR, 30/60/90, CSV, launch panel). 8 tests.
-- **Stripe adapter is still a stub** — Living Room's build is the next target
-  (implement `StripeProvider` + customer portal, add a `living-room` instance).
-- Out of scope parked in `FUTURE.md`. Before client launch: resolve the Square
-  `// VERIFY:` API strings against a live sandbox, and run the $1-tier
-  webhook→comms test with real credentials (documented in the app README).
+**Phase 1 — built and green (all three clients representable by config).**
+- `packages/codec` — engine: **Square + Stripe adapters both implemented**,
+  Resend comms (all lifecycle emails incl. pickup reminder), processor-blind site
+  components, `listMembers` + `webhookEventId` on the interface. 54 tests.
+- `apps/club-host` — instance-configurable host: **Outer Heaven** (Square, direct
+  billing), **Sunset** (Square, waitlist→billing), **Living Room** (Stripe,
+  Table22 migration) as config; webhook + waitlist routes; processor-blind
+  `/manage` self-serve; customer UI; owner dashboard (members, MRR, 30/60/90,
+  CSV, launch panel). 9 tests.
+- Out of scope parked in `FUTURE.md`. Before client launch: resolve the
+  `// VERIFY:` API strings (Square + Stripe) against live sandboxes, and run the
+  $1-tier webhook→comms test with real credentials (documented in the app README).

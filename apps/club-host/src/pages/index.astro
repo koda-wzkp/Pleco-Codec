@@ -24,7 +24,7 @@ const isWaitlist = config.launch.mode === 'waitlist';
 const switchover =
   config.launch.mode === 'waitlist' ? config.launch.switchover : undefined;
 
-const manageUrl = manageHref(instance);
+const manageUrl = manageHref();
 ---
 <Base title={copy.headline} description={copy.intro}>
   <main>

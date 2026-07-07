@@ -10,7 +10,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHmac } from 'node:crypto';
-import { SquareProvider } from 'pleco-codec/billing';
+import { SquareProvider, StripeProvider } from 'pleco-codec/billing';
 import { ResendComms } from 'pleco-codec/comms';
 
 const SIG_KEY = 'test-sig-key';
@@ -65,6 +65,13 @@ function mockFetch() {
     if (u.includes('/v2/customers/')) {
       return new Response(
         JSON.stringify({ customer: { email_address: 'member@example.com' } }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }
+    // Stripe customer lookup
+    if (u.includes('api.stripe.com/v1/customers/')) {
+      return new Response(
+        JSON.stringify({ id: 'cus_1', email: 'member@example.com' }),
         { status: 200, headers: { 'content-type': 'application/json' } },
       );
     }
@@ -147,6 +154,44 @@ test('payment_failed → member nudge + owner flag', async () => {
     assert.equal(emailCalls.length, 2);
     const nudge = emailCalls.find((c) => c.body.to[0] === 'member@example.com');
     assert.match(nudge.body.subject, /card/i);
+  } finally {
+    fm.restore();
+  }
+});
+
+test('Stripe: signed subscription.created → activated → welcome + owner notify', async () => {
+  const SECRET = 'whsec_test';
+  const fm = mockFetch();
+  try {
+    const provider = new StripeProvider({
+      secretKey: 'sk_test',
+      webhookSigningSecret: SECRET,
+      tierRefs: { 'lr-2': 'price_2' },
+      tierPrices: { 'lr-2': 5000 },
+    });
+    const comms = new ResendComms({
+      apiKey: 'r', audienceId: 'aud_1', from: 'Wine Club <club@venue.example>',
+      ownerEmail: 'owner@venue.example', venueName: 'Living Room Wines',
+    });
+    const seen = new Set();
+    const body = JSON.stringify({
+      id: 'evt_lr_1',
+      type: 'customer.subscription.created',
+      created: 1767225600,
+      data: { object: { id: 'sub_1', customer: 'cus_1', status: 'active', items: { data: [{ price: { id: 'price_2' } }] } } },
+    });
+    const t = Math.floor(Date.now() / 1000);
+    const v1 = createHmac('sha256', SECRET).update(`${t}.${body}`).digest('hex');
+    const req = new Request('https://venue.example/api/webhooks/billing', {
+      method: 'POST', headers: { 'stripe-signature': `t=${t},v1=${v1}` }, body,
+    });
+
+    const r = await handleWebhook(provider, comms, seen, req);
+    assert.equal(r.type, 'activated');
+    const emailCalls = fm.calls.filter((c) => c.url.endsWith('/emails'));
+    assert.equal(emailCalls.length, 2, 'member welcome + owner notify');
+    const recipients = emailCalls.map((c) => c.body.to[0]).sort();
+    assert.deepEqual(recipients, ['member@example.com', 'owner@venue.example']);
   } finally {
     fm.restore();
   }

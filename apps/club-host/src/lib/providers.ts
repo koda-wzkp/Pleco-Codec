@@ -36,29 +36,28 @@ export function billingProvider(instance: ClubInstance): BillingProvider {
         tierPrices,
       });
     case 'stripe':
-      // Living Room class. StripeProvider is a stub until the Stripe adapter is
-      // built (Phase 1 follow-on) — this constructs it so the wiring is correct;
-      // its methods throw NotImplementedError until implemented.
+      // Living Room class (Toast/no-POS shops).
       return new StripeProvider({
         secretKey: requireEnv('STRIPE_SECRET_KEY'),
         webhookSigningSecret: requireEnv('STRIPE_WEBHOOK_SIGNING_SECRET'),
         portalReturnUrl: env('STRIPE_PORTAL_RETURN_URL'),
+        redirectUrl: env('STRIPE_REDIRECT_URL'),
+        tierRefs: parseTierRefs(env('STRIPE_TIER_REFS')),
+        tierPrices,
       });
   }
 }
 
 /**
- * Processor-blind "manage your membership" href for the footer link. Resolves
- * the right static surface from env (Square buyer-account page or Stripe portal
- * return), falling back to a mailto. Kept here in the adapter/config layer so
- * pages never reference a processor-specific env var.
+ * Processor-blind "manage your membership" href. Points at this site's own
+ * `/manage` route, which resolves the processor-specific surface at request time
+ * (Stripe billing portal / Square buyer-account page or mailto). Absolute when
+ * PUBLIC_SITE_URL is set (so it works inside emails), relative otherwise (fine
+ * for the on-page link). No processor name leaks to the UI.
  */
-export function manageHref(instance: ClubInstance): string {
-  return (
-    env('SQUARE_MANAGE_URL') ??
-    env('STRIPE_PORTAL_RETURN_URL') ??
-    `mailto:${instance.contactEmail}`
-  );
+export function manageHref(): string {
+  const base = env('PUBLIC_SITE_URL');
+  return base ? `${base.replace(/\/$/, '')}/manage` : '/manage';
 }
 
 /** Build the Resend comms layer for the instance. */
@@ -70,7 +69,7 @@ export function comms(instance: ClubInstance): ResendComms {
     ownerEmail: instance.config.ownerNotifyEmail,
     venueName: instance.config.venueName,
     contactEmail: instance.contactEmail,
-    manageUrl: env('SQUARE_MANAGE_URL') ?? env('STRIPE_PORTAL_RETURN_URL'),
+    manageUrl: manageHref(),
     welcomeNextStep: instance.welcomeNextStep,
   });
 }

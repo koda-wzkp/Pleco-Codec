@@ -32,7 +32,7 @@ export function mockFetch(
         String(v),
       ]),
     );
-    const body = init?.body ? JSON.parse(init.body as string) : undefined;
+    const body = init?.body ? parseBody(init.body as string) : undefined;
     const call: RecordedCall = { url, method, headers, body };
     calls.push(call);
 
@@ -56,4 +56,19 @@ export function mockFetch(
       globalThis.fetch = original;
     },
   };
+}
+
+/**
+ * Parse a recorded request body: JSON (Square/Resend) or form-encoded
+ * (Stripe) into a plain object. Form keys keep their bracket notation, e.g.
+ * `line_items[0][price]`.
+ */
+function parseBody(raw: string): any {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    const out: Record<string, string> = {};
+    for (const [k, v] of new URLSearchParams(raw)) out[k] = v;
+    return out;
+  }
 }

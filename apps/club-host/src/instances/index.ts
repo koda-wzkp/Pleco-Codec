@@ -5,10 +5,12 @@
 import type { ClubInstance } from './types.js';
 import { outerHeaven } from './outer-heaven.js';
 import { sunset } from './sunset.js';
+import { livingRoom } from './living-room.js';
 
 export const INSTANCES: Record<string, ClubInstance> = {
   [outerHeaven.id]: outerHeaven,
   [sunset.id]: sunset,
+  [livingRoom.id]: livingRoom,
 };
 
 export function activeInstance(): ClubInstance {
