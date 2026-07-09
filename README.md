@@ -1,8 +1,49 @@
-# codec.pleco.dev
+# Pleco CODEC
 
-Single-page marketing + open-source landing for CODEC. Built with [Astro](https://astro.build), deployed on Vercel at `codec.pleco.dev`.
+CODEC is an owned operations layer for hospitality businesses: it runs the
+mechanisms a venue should own — club/subscription programs, waitlists,
+a member market, member comms — on accounts the venue already controls.
+The venue's payment processor (Square first, Stripe planned) is the source
+of truth for members and billing; CODEC keeps no member database and no
+passwords, and the code for each build lives in a repo the client owns.
 
-## Develop
+## What's in this repo
+
+- **Adapter architecture docs** — how CODEC binds to external providers:
+  - [`docs/adapters/SPEC.md`](docs/adapters/SPEC.md) — the adapter
+    contract: lifecycle, per-mechanism capabilities, error/retry
+    semantics, TypeScript interfaces.
+  - [`docs/adapters/square.md`](docs/adapters/square.md) — the Square
+    reference mapping (Subscriptions, Customers, Catalog, Webhooks).
+  - [`docs/adapters/TEMPLATE.md`](docs/adapters/TEMPLATE.md) —
+    feasibility-gated template for proposing any future adapter.
+- **[`AUDIT.md`](AUDIT.md)** — repo audit from the 2026-07-07
+  architecture pass.
+- **The codec.pleco.dev site** — an [Astro](https://astro.build) static
+  site plus one Vercel serverless function (details below).
+
+What's *not* here yet: the adapter/engine code itself. Adapters are built
+one at a time, for real deployments, after the feasibility checklist in
+the template is confirmed — the docs above are the contract that code will
+implement, and it will be published under the same Apache-2.0 license as
+it lands.
+
+## Architecture principles
+
+- **Processor as backend.** Members and billing live in the venue's own
+  Square/Stripe account; identity is magic-link email auth against the
+  processor's customer records. No CODEC-owned member store, ever. When a
+  deployment needs richer perks/points/history, the escalation is a hosted
+  database in the *client's* account — never a shared multi-tenant one.
+- **Absorb vs. coexist.** CODEC absorbs owned mechanisms (clubs, queues,
+  catalogs, comms). Discovery networks that drive customer acquisition
+  (OpenTable, Resy, Tock in network mode) are coexisted with, not wrapped.
+- **The money rail stays the processor's.** Checkout happens on
+  processor-hosted pages; card data never touches CODEC.
+- **Client ownership (Model A).** Every account — processor, hosting,
+  repo — belongs to the client from day one; Pleco is a collaborator.
+
+## Site development
 
 ```sh
 npm install
@@ -11,82 +52,51 @@ npm run build    # static build to dist/
 npm run preview  # serve the build locally
 ```
 
-## Brand assets
+Brand assets in `src/assets/brand/` come from the Pleco brand kit
+(`koda-wzkp/pleco-site`); the P-mark and fish are inlined as `<symbol>`s
+and referenced with `<use>`. The mark's "P" is IBM Plex Serif text, so keep
+the IBM Plex family loaded. If the kit updates, re-copy the files and run
+`node scripts/generate-og.mjs` (needs network for fonts) to refresh
+`public/og.png`.
 
-The P-mark and fish in `src/assets/brand/` are the **real** Pleco brand files,
-copied from the `koda-wzkp/pleco-site` repo (`public/pleco-logo.svg` and
-`public/pleco-fish.svg`) — the same `pleco-logo.svg` pleco.dev uses as its mark.
-They're inlined once as reusable `<symbol>`s (`#pmark`, `#fish`) and referenced
-via `<use>`, so the header mark renders identically to pleco.dev's. The mark's
-"P" is IBM Plex Serif `<text>`; keep IBM Plex Serif loaded so it doesn't fall
-back to Georgia. `public/favicon.svg` is a copy of the mark.
+### Guide funnel (`/guide`)
 
-If the brand kit updates, re-copy those two files and run
-`node scripts/generate-og.mjs` to refresh `public/og.png`.
+The one dynamic part of the site: a lead-capture page for the
+"Own Your Club" ebook, a Vercel function, and a thank-you page.
 
-## ⚠️ Before launch — required
+- `src/pages/guide.astro` — landing page. The form natively POSTs to
+  `/api/guide` (works without JS); with JS it submits via `fetch` and shows
+  an inline success panel. An off-screen honeypot field guards spam.
+- `api/guide.js` — Vercel Function. Validates the email, then uses
+  [Resend](https://resend.com) to email the requester the PDF link and
+  send an internal lead notification. Deliberately no database — leads
+  live in the notification inbox.
+- `src/pages/guide/thanks.astro` — confirmation + direct download.
 
-1. **Make this repo public** (or point links at whatever repo is public).
-   Every "Repo" / "Browse the source" / terminal `git clone` link points at
-   `https://github.com/koda-wzkp/Pleco-Codec` (set once as `REPO_URL` in
-   `src/pages/index.astro`). The page's open-source pitch cannot ship against a 404.
-
-2. **Regenerate `public/og.png` in an environment where fonts load.** The
-   committed OG image was generated in a sandbox with Google Fonts blocked, so
-   its text is in the Georgia fallback rather than IBM Plex Serif. Re-run
-   `node scripts/generate-og.mjs` locally (or on a machine with network access)
-   before launch. The mark itself renders correctly either way.
-
-## Guide funnel (`/guide`)
-
-The "Own Your Club" ebook funnel: a lead-capture landing page, a Vercel
-serverless function, and a thank-you page. It's the only dynamic part of an
-otherwise fully static site.
-
-- **`src/pages/guide.astro`** — landing page. Pitch + 6-chapter list + one-field
-  email form. Progressive-enhancement: the `<form>` natively POSTs to
-  `/api/guide` (works with JS off, redirecting to `/guide/thanks`); with JS it
-  submits via `fetch` and reveals an inline success panel. Includes an
-  off-screen honeypot (`company`) as a spam guard.
-- **`api/guide.js`** — Vercel Function (Node). Validates the email server-side,
-  rejects honeypot hits, then uses **Resend** to (1) email the requester a link
-  to `public/Own-Your-Club-ebook.pdf` and (2) notify Koda of the new lead
-  (reply-to = the lead). No database — the lead list lives in the inbox. Vercel
-  auto-detects the `api/` directory, so the site stays static.
-- **`src/pages/guide/thanks.astro`** — confirmation + ungated direct download +
-  warm CTA (`hello@pleco.dev`).
-
-### Required env vars (set in Vercel → Project → Settings → Environment Variables)
+Environment variables (Vercel → Project → Settings → Environment
+Variables; the API key never lives in the repo):
 
 | Variable | Purpose | Default if unset |
 | --- | --- | --- |
-| `RESEND_API_KEY` | Resend secret key. **Required** — no key, no email. | — (function returns a generic failure) |
-| `GUIDE_FROM` | Verified Resend sender, e.g. `Pleco CODEC <guide@pleco.dev>`. The domain must be verified in Resend. | `Pleco CODEC <guide@pleco.dev>` |
-| `CONTACT_EMAIL` | The human address Conor talks to leads from. Used as the guide email's reply-to and as the default lead-notification inbox. | `conor@pleco.dev` |
-| `LEAD_NOTIFY_TO` | Inbox that receives lead notifications. | `CONTACT_EMAIL` |
-| `SITE_URL` | Public origin used to build the PDF link. | `https://codec.pleco.dev` |
+| `RESEND_API_KEY` | Resend secret key — required; without it the function returns a generic failure | — |
+| `GUIDE_FROM` | Verified Resend sender | `Pleco CODEC <guide@pleco.dev>` |
+| `CONTACT_EMAIL` | Reply-to on the guide email and default notification inbox | `conor@pleco.dev` |
+| `LEAD_NOTIFY_TO` | Inbox receiving lead notifications | `CONTACT_EMAIL` |
+| `SITE_URL` | Public origin used to build the PDF link | `https://codec.pleco.dev` |
 
-The key lives only in Vercel env, never in the repo. After setting the vars,
-**test end-to-end with a real address**: submit the form → confirm the guide
-email arrives → confirm the lead notification lands in `LEAD_NOTIFY_TO`.
+After changing these, test end-to-end with a real address: submit the
+form, confirm the guide email arrives, confirm the notification lands.
 
-## Design notes
+### Deploy
 
-- The visual/copy source of truth is the reference design (`codec-pleco-dev.html`).
-- Dark-mode inversion is explicitly opted out (`color-scheme: light` meta + CSS)
-  so in-app webviews don't auto-darken the cream sections.
-- Scroll-reveal is fail-safe: content is fully visible by default; the hidden
-  starting state only applies when an inline script confirms JS +
-  IntersectionObserver + no `prefers-reduced-motion` (adds `.js` to `<html>`).
-  Text never depends on JS to be readable.
-- Fonts: IBM Plex Serif (display) / IBM Plex Sans (body) / IBM Plex Mono
-  (eyebrows, terminal) via Google Fonts, `display=swap` — matching pleco.dev's
-  type family (the reference's Fraunces/Inter/JetBrains Mono was swapped for the
-  real pleco.dev faces per the build brief).
+Vercel auto-detects Astro; the site builds static to `dist/` and `api/` is
+deployed as a serverless function alongside it. The `codec.pleco.dev`
+domain is assigned in the Vercel dashboard. Design notes: the pages opt out
+of dark-mode inversion (`color-scheme: light`), scroll-reveal is fail-safe
+(content is visible without JS), and type is IBM Plex Serif/Sans/Mono via
+Google Fonts.
 
-## Deploy
+## License
 
-Vercel auto-detects Astro; no adapter needed. The site builds to static output
-in `dist/`, and the `api/` directory is deployed as a serverless function
-alongside it (see the guide funnel section for the env vars it needs). Assign
-the `codec.pleco.dev` domain to this project in the Vercel dashboard.
+[Apache-2.0](LICENSE). You may use, modify, and deploy this — that's the
+point: a CODEC build can be maintained by anyone the client hires, forever.
