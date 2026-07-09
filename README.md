@@ -11,6 +11,17 @@ Apache-2.0.
 > Formerly CODEC. Renamed to Haptera in July 2026; same project, same
 > license, same scope.
 
+## Why Haptera
+
+Haptera are the finger-like structures a kelp uses to grip bedrock. They look like
+roots but aren't: they contain no vascular tissue, and the kelp takes no nutrition
+from the rock it holds. It anchors without extracting.
+
+That's the design constraint. Haptera runs on your accounts — your Square, your
+Stripe, your database, your domain. It holds your club, your waitlist, your comms.
+It takes nothing from the transactions passing through, because it never touches
+them. Apache-2.0. Your code, your data, your customers.
+
 ## Layout
 
 ```
