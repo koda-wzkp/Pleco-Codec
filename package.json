@@ -1,21 +1,20 @@
 {
-  "name": "pleco-codec-site",
-  "version": "1.0.0",
+  "name": "pleco-codec-monorepo",
+  "version": "0.0.0",
   "private": true,
+  "description": "CODEC — membership/club programs on client-owned rails. Monorepo: packages/codec (the engine) + apps/* (marketing site and per-client host apps).",
+  "license": "Apache-2.0",
   "type": "module",
-  "engines": {
-    "node": "22.x"
-  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
   },
-  "dependencies": {
-    "astro": "^5.0.0",
-    "resend": "^4.8.0"
-  },
-  "devDependencies": {
-    "playwright-core": "^1.61.1"
+  "engines": {
+    "node": ">=20"
   }
 }

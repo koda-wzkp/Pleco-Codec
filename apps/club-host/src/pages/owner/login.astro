@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import { OWNER_COOKIE, passcodeMatches, expectedToken } from '../../lib/owner-auth.js';
+
+export const prerender = false;
+
+let error = false;
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  const passcode = String(data.get('passcode') ?? '');
+  if (passcodeMatches(passcode)) {
+    Astro.cookies.set(OWNER_COOKIE, expectedToken()!, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: import.meta.env.PROD,
+      path: '/',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+    return Astro.redirect('/owner', 302);
+  }
+  error = true;
+}
+---
+<Base title="Owner sign-in">
+  <main>
+    <section>
+      <div class="wrap" style="max-width:420px">
+        <h1 class="section-heading">Owner sign-in</h1>
+        <form method="POST" class="codec-waitlist-form" style="margin-top:20px">
+          <label class="codec-waitlist-field">
+            <span class="codec-waitlist-label">Passcode</span>
+            <input type="password" name="passcode" autocomplete="current-password" required autofocus />
+          </label>
+          {error ? <p class="codec-waitlist-error" role="alert">That passcode didn’t match. Try again.</p> : null}
+          <button type="submit" class="codec-waitlist-submit">Sign in</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</Base>

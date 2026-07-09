@@ -1,32 +1,32 @@
-# Pleco CODEC
+# Pleco CODEC — monorepo
 
 CODEC is an owned operations layer for hospitality businesses: it runs the
 mechanisms a venue should own — club/subscription programs, waitlists,
-a member market, member comms — on accounts the venue already controls.
-The venue's payment processor (Square first, Stripe planned) is the source
-of truth for members and billing; CODEC keeps no member database and no
-passwords, and the code for each build lives in a repo the client owns.
+member comms — on accounts the venue already controls. Billing runs on the
+**client's own** Square or Stripe; signup lives on the client's own site;
+the client owns the code and the member list. No platform cut, no
+per-member fee. CODEC keeps no member database and no passwords. Core is
+Apache-2.0.
 
-## What's in this repo
+## Layout
 
-- **Adapter architecture docs** — how CODEC binds to external providers:
-  - [`docs/adapters/SPEC.md`](docs/adapters/SPEC.md) — the adapter
-    contract: lifecycle, per-mechanism capabilities, error/retry
-    semantics, TypeScript interfaces.
-  - [`docs/adapters/square.md`](docs/adapters/square.md) — the Square
-    reference mapping (Subscriptions, Customers, Catalog, Webhooks).
-  - [`docs/adapters/TEMPLATE.md`](docs/adapters/TEMPLATE.md) —
-    feasibility-gated template for proposing any future adapter.
-- **[`AUDIT.md`](AUDIT.md)** — repo audit from the 2026-07-07
-  architecture pass.
-- **The codec.pleco.dev site** — an [Astro](https://astro.build) static
-  site plus one Vercel serverless function (details below).
-
-What's *not* here yet: the adapter/engine code itself. Adapters are built
-one at a time, for real deployments, after the feasibility checklist in
-the template is confirmed — the docs above are the contract that code will
-implement, and it will be published under the same Apache-2.0 license as
-it lands.
+```
+packages/
+  codec/          The engine (npm package `pleco-codec`). Billing adapters
+                  (Square + Stripe), Resend comms, and processor-blind
+                  React site components. Zero runtime deps; React optional peer.
+apps/
+  marketing/      codec.pleco.dev — the marketing + OSS landing site (Astro),
+                  including the /guide lead-capture funnel.
+  club-host/      Instance-configurable host app for client clubs.
+docs/
+  adapters/       The adapter contract the engine implements:
+                  SPEC.md (lifecycle, capabilities, error/retry semantics),
+                  square.md (Square reference mapping), TEMPLATE.md
+                  (feasibility-gated template for future adapters).
+AUDIT.md          Repo audit from the 2026-07-07 architecture pass.
+FUTURE.md         Deferred / out-of-scope features (the parking lot).
+```
 
 ## Architecture principles
 
@@ -43,21 +43,36 @@ it lands.
 - **Client ownership (Model A).** Every account — processor, hosting,
   repo — belongs to the client from day one; Pleco is a collaborator.
 
-## Site development
+## Development
+
+npm workspaces tie it together. From the repo root:
 
 ```sh
-npm install
-npm run dev      # local dev server
-npm run build    # static build to dist/
-npm run preview  # serve the build locally
+npm install                 # install all workspaces
+npm test                    # run every workspace's tests
+npm run build               # build every workspace
+npm run build --workspace apps/marketing
+npm test  --workspace packages/codec
 ```
 
-Brand assets in `src/assets/brand/` come from the Pleco brand kit
-(`koda-wzkp/pleco-site`); the P-mark and fish are inlined as `<symbol>`s
+## Product context
+
+The feature set is defined by three real clients:
+- **Sunset Wine and Tapas** (Carrabelle FL) — pickup wine club, pre-open;
+  founding-member **waitlist that converts to billing** at launch. Square.
+- **Outer Heaven Espresso** (Nevada City CA) — operating shop, pickup bean club,
+  **direct-to-billing** now. Square.
+- **Living Room Wines** (Portland OR) — operating wine bar, migrating a club
+  **off Table22**; self-serve member management is the value. Stripe.
+
+## Marketing site (`apps/marketing`)
+
+Brand assets in `apps/marketing/src/assets/brand/` come from the Pleco brand
+kit (`koda-wzkp/pleco-site`); the P-mark and fish are inlined as `<symbol>`s
 and referenced with `<use>`. The mark's "P" is IBM Plex Serif text, so keep
 the IBM Plex family loaded. If the kit updates, re-copy the files and run
-`node scripts/generate-og.mjs` (needs network for fonts) to refresh
-`public/og.png`.
+`node scripts/generate-og.mjs` (needs network for fonts) from
+`apps/marketing/` to refresh `public/og.png`.
 
 ### Guide funnel (`/guide`)
 
@@ -87,14 +102,37 @@ Variables; the API key never lives in the repo):
 After changing these, test end-to-end with a real address: submit the
 form, confirm the guide email arrives, confirm the notification lands.
 
-### Deploy
+## ⚠️ Deploy notes
 
-Vercel auto-detects Astro; the site builds static to `dist/` and `api/` is
-deployed as a serverless function alongside it. The `codec.pleco.dev`
-domain is assigned in the Vercel dashboard. Design notes: the pages opt out
-of dark-mode inversion (`color-scheme: light`), scroll-reveal is fail-safe
-(content is visible without JS), and type is IBM Plex Serif/Sans/Mono via
-Google Fonts.
+- **Marketing site (`apps/marketing`):** moved from the repo root. Its Vercel
+  project's **Root Directory must be set to `apps/marketing`** (Vercel → Project
+  → Settings → Build & Deployment → Root Directory), or the production build of
+  codec.pleco.dev breaks on the first deploy after this merges. `vercel.json`
+  and the `api/` function directory travel with the app. The `codec.pleco.dev`
+  domain is assigned in the Vercel dashboard.
+- **Client host (`apps/club-host`):** one Vercel project **per client**, each
+  with Root Directory `apps/club-host`, its own `CODEC_INSTANCE`, and its own
+  secrets. Swap the `@astrojs/node` adapter for `@astrojs/vercel` in
+  `apps/club-host/astro.config.mjs` (one line) before deploying.
+
+Design notes: the marketing pages opt out of dark-mode inversion
+(`color-scheme: light`), scroll-reveal is fail-safe (content is visible
+without JS), and type is IBM Plex Serif/Sans/Mono via Google Fonts.
+
+## Status
+
+**Phase 1 — built and green (all three clients representable by config).**
+- `packages/codec` — engine: **Square + Stripe adapters both implemented**,
+  Resend comms (all lifecycle emails incl. pickup reminder), processor-blind site
+  components, `listMembers` + `webhookEventId` on the interface.
+- `apps/club-host` — instance-configurable host: **Outer Heaven** (Square, direct
+  billing), **Sunset** (Square, waitlist→billing), **Living Room** (Stripe,
+  Table22 migration) as config; webhook + waitlist routes; processor-blind
+  `/manage` self-serve; customer UI; owner dashboard (members, MRR, 30/60/90,
+  CSV, launch panel).
+- Out of scope parked in `FUTURE.md`. Before client launch: resolve the
+  `// VERIFY:` API strings (Square + Stripe) against live sandboxes, and run the
+  $1-tier webhook→comms test with real credentials (documented in the app README).
 
 ## License
 
