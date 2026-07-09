@@ -5,9 +5,9 @@ deployments
 Date: 2026-07-07
 Contract: implements [SPEC.md](./SPEC.md)
 
-Square is CODEC's primary processor: the venue's own Square account is the
+Square is Haptera's primary processor: the venue's own Square account is the
 source of truth for members, billing, and catalog. This document maps each
-CODEC mechanism to the specific Square API surfaces it rides on.
+Haptera mechanism to the specific Square API surfaces it rides on.
 
 ## Version assumptions
 
@@ -26,7 +26,7 @@ exercise daily.
 The deployment uses an access token issued from the **client's own** Square
 Developer account, stored only in the deployment's hosting environment
 (e.g. Vercel env vars). Pleco holds collaborator access, not ownership.
-OAuth is unnecessary — there is no multi-tenant CODEC service to authorize
+OAuth is unnecessary — there is no multi-tenant Haptera service to authorize
 against, by design.
 
 Required permission scopes at minimum: customers read/write, subscriptions
@@ -36,7 +36,7 @@ are narrower than the enabled mechanisms need.
 
 ## Mechanism mapping
 
-| CODEC concept | Square surface |
+| Haptera concept | Square surface |
 | --- | --- |
 | Club tier | **Catalog API**: `SUBSCRIPTION_PLAN` / `SUBSCRIPTION_PLAN_VARIATION` catalog objects |
 | Membership | **Subscriptions API**: `Subscription` objects |
@@ -56,7 +56,7 @@ them from the Catalog API.
 
 Checkout: the adapter produces a Square-hosted checkout link for a plan
 variation via the **Checkout API** (payment links), so signup and card
-entry happen entirely on Square's pages and CODEC never sees card data.
+entry happen entirely on Square's pages and Haptera never sees card data.
 **[verify]** that payment links support the specific subscription-plan
 checkout configuration a new deployment needs (the exact
 `CreatePaymentLink` options for subscriptions have shifted across API
@@ -84,12 +84,12 @@ the pinned version rather than promising specifics to a client.
 
 ### Members ← Customers API (magic-link identity)
 
-A CODEC member *is* a Square `Customer`. There is no CODEC user table.
+A Haptera member *is* a Square `Customer`. There is no Haptera user table.
 
 Magic-link flow:
 
 1. Member enters their email on the venue's site.
-2. CODEC emails a signed, expiring one-time link (token signing is core's
+2. Haptera emails a signed, expiring one-time link (token signing is core's
    job, per SPEC §3.1; nothing is stored server-side).
 3. On click, the adapter resolves the email via Customers API
    `SearchCustomers` with an exact email filter → `MemberRef` wrapping the
@@ -102,7 +102,7 @@ Notes:
   Square data condition; the adapter resolves to the customer holding an
   active subscription, else the most recently updated, and logs the
   ambiguity.
-- No passwords, no password resets, no member PII persisted by CODEC. The
+- No passwords, no password resets, no member PII persisted by Haptera. The
   ephemeral cache holds provider ids and display data only, rebuildable
   from Square at any time.
 
@@ -171,7 +171,7 @@ Square maps cleanly onto the SPEC §4.1 taxonomy: `UNAUTHORIZED` → `auth`,
 `provider_unavailable`. Square does not publish fixed numeric rate limits;
 the adapter treats 429 + backoff as the contract. Subscription and checkout
 creation calls take an `idempotency_key`, which the adapter always sends
-(SPEC §4.2), derived from the CODEC-side intent so a retry can't
+(SPEC §4.2), derived from the Haptera-side intent so a retry can't
 double-enroll a member.
 
 ## Known limits and open items

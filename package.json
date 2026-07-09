@@ -1,8 +1,8 @@
 {
-  "name": "pleco-codec-monorepo",
+  "name": "pleco-haptera-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "CODEC — membership/club programs on client-owned rails. Monorepo: packages/codec (the engine) + apps/* (marketing site and per-client host apps).",
+  "description": "Haptera — membership/club programs on client-owned rails. Monorepo: packages/haptera (the engine) + apps/* (marketing site and per-client host apps).",
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [

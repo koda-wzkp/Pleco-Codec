@@ -23,12 +23,12 @@ test("src/site contains no processor names (acceptance §12 grep check)", () => 
   }
 });
 
-test("site components use stable codec-* classNames", () => {
+test("site components use stable haptera-* classNames", () => {
   const wanted = [
-    ["TierPanels.tsx", "codec-tier-panels"],
-    ["PerksList.tsx", "codec-perks-list"],
-    ["WaitlistForm.tsx", "codec-waitlist-form"],
-    ["ManageLink.tsx", "codec-manage-link"],
+    ["TierPanels.tsx", "haptera-tier-panels"],
+    ["PerksList.tsx", "haptera-perks-list"],
+    ["WaitlistForm.tsx", "haptera-waitlist-form"],
+    ["ManageLink.tsx", "haptera-manage-link"],
   ] as const;
   for (const [file, className] of wanted) {
     const content = readFileSync(join(SITE_DIR, file), "utf8");

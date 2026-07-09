@@ -1,4 +1,4 @@
-// codec/site/TierPanels.tsx — processor-blind (spec §8).
+// haptera/site/TierPanels.tsx — processor-blind (spec §8).
 //
 // Renders ClubProgram.tiers as semantic, unstyled panels. Each tier's CTA
 // href comes from the `launch` prop:
@@ -10,7 +10,7 @@
 // this is the waitlist -> billing switchover mechanism. This component never
 // knows which processor is behind the URLs.
 //
-// Styling: none. Stable classNames (`codec-tier-panels`, `codec-tier-panel`,
+// Styling: none. Stable classNames (`haptera-tier-panels`, `haptera-tier-panel`,
 // ...) let client sites style via their own tokens.
 
 import type { ReactNode } from "react";
@@ -66,15 +66,15 @@ export function TierPanels({
   const label =
     ctaLabel ?? (launch.mode === "waitlist" ? "Join the list" : "Become a member");
   return (
-    <ul className="codec-tier-panels">
+    <ul className="haptera-tier-panels">
       {program.tiers.map((tier) => (
-        <li className="codec-tier-panel" key={tier.id} data-tier={tier.id}>
-          <h3 className="codec-tier-label">{tier.label}</h3>
-          <p className="codec-tier-price">
+        <li className="haptera-tier-panel" key={tier.id} data-tier={tier.id}>
+          <h3 className="haptera-tier-label">{tier.label}</h3>
+          <p className="haptera-tier-price">
             {formatPrice(tier.priceCents, program.cadence)}
           </p>
-          <p className="codec-tier-description">{tier.description}</p>
-          <a className="codec-tier-cta" href={tierCtaHref(launch, tier.id)}>
+          <p className="haptera-tier-description">{tier.description}</p>
+          <a className="haptera-tier-cta" href={tierCtaHref(launch, tier.id)}>
             {label}
           </a>
         </li>

@@ -1,15 +1,15 @@
 # @pleco/club-host
 
-One instance-configurable CODEC host site. The same app renders any club from a
-`ClubInstance` config — pick the client with the `CODEC_INSTANCE` env var. This
-is the integration layer around `packages/codec`: it wires the webhook + waitlist
+One instance-configurable Haptera host site. The same app renders any club from a
+`ClubInstance` config — pick the client with the `HAPTERA_INSTANCE` env var. This
+is the integration layer around `packages/haptera`: it wires the webhook + waitlist
 routes, renders the customer UI, and (next) the owner dashboard.
 
 ## How a client is defined
 
 A client = **one object** in `src/instances/` (see `outer-heaven.ts`,
 `sunset.ts`) registered in `src/instances/index.ts`. It carries the engine's
-`CodecInstanceConfig` (processor, program/tiers, launch mode, comms/owner,
+`HapteraInstanceConfig` (processor, program/tiers, launch mode, comms/owner,
 scope) plus page copy. **No route or page code changes per client** — that's the
 acceptance bar ("a new client launches from config alone").
 
@@ -39,7 +39,7 @@ the hosted checkout links, then paste the two outputs:
 
 ```sh
 cp .env.example .env         # fill in the processor + Resend secrets
-CODEC_INSTANCE=outer-heaven npm run provision --workspace @pleco/club-host
+HAPTERA_INSTANCE=outer-heaven npm run provision --workspace @pleco/club-host
 ```
 
 It prints (1) the `SQUARE_TIER_REFS` / `STRIPE_TIER_REFS` env line and (2) the
@@ -74,7 +74,7 @@ everything comes from `BillingProvider.listMembers()`.
 
 ```sh
 cp .env.example .env          # fill in Square + Resend secrets
-CODEC_INSTANCE=sunset npm run dev --workspace @pleco/club-host
+HAPTERA_INSTANCE=sunset npm run dev --workspace @pleco/club-host
 npm test --workspace @pleco/club-host   # webhook→event→comms integration tests
 ```
 
@@ -94,7 +94,7 @@ the only island, and its markup is server-rendered too).
 Local/standalone uses the `@astrojs/node` adapter. For Vercel, swap to
 `@astrojs/vercel` in `astro.config.mjs` (one line) and set the project's Root
 Directory to `apps/club-host`. One Vercel project per client, each with its own
-`CODEC_INSTANCE` and secrets.
+`HAPTERA_INSTANCE` and secrets.
 
 ### Idempotency at scale
 The webhook dedupe store is in-memory (`src/lib/idempotency.ts`) — correct for a

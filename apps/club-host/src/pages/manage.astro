@@ -39,13 +39,13 @@ if (Astro.request.method === 'POST') {
           Enter the email you signed up with and we’ll take you to your
           membership — pause, update your card, or cancel, all in one place.
         </p>
-        <form method="POST" class="codec-waitlist-form" style="margin-top:16px">
-          <label class="codec-waitlist-field">
-            <span class="codec-waitlist-label">Email</span>
+        <form method="POST" class="haptera-waitlist-form" style="margin-top:16px">
+          <label class="haptera-waitlist-field">
+            <span class="haptera-waitlist-label">Email</span>
             <input type="email" name="email" autocomplete="email" required autofocus />
           </label>
-          {error ? <p class="codec-waitlist-error" role="alert">{error}</p> : null}
-          <button type="submit" class="codec-waitlist-submit">Continue</button>
+          {error ? <p class="haptera-waitlist-error" role="alert">{error}</p> : null}
+          <button type="submit" class="haptera-waitlist-submit">Continue</button>
         </form>
       </div>
     </section>

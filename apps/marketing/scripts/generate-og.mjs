@@ -30,7 +30,7 @@ const html = `<!DOCTYPE html>
   <div class="in">
     <div class="mark">${mark}</div>
     <h1>Own your membership program.</h1>
-    <div class="sub">Pleco CODEC — one-time build · open source · your rails</div>
+    <div class="sub">Pleco Haptera — one-time build · open source · your rails</div>
   </div>
 </body></html>`;
 

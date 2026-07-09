@@ -1,7 +1,7 @@
 {
-  "name": "pleco-codec",
+  "name": "pleco-haptera",
   "version": "0.1.0",
-  "description": "CODEC v2 core: membership programs on client-owned rails. Billing adapters (Square now, Stripe stub), Resend comms, and processor-blind site components. One-time build, no platform cut, Pleco never in the money path.",
+  "description": "Haptera v2 core: membership programs on client-owned rails. Billing adapters (Square now, Stripe stub), Resend comms, and processor-blind site components. One-time build, no platform cut, Pleco never in the money path.",
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
@@ -34,7 +34,7 @@
   "files": [
     "dist",
     "docs",
-    "CODEC-v2-CORE.md",
+    "HAPTERA-CORE.md",
     "LICENSE",
     "README.md"
   ],

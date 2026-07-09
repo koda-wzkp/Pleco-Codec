@@ -1,6 +1,6 @@
-# codec.pleco.dev
+# haptera.pleco.dev
 
-Single-page marketing + open-source landing for CODEC. Built with [Astro](https://astro.build), deployed on Vercel at `codec.pleco.dev`.
+Single-page marketing + open-source landing for Haptera. Built with [Astro](https://astro.build), deployed on Vercel at `haptera.pleco.dev`.
 
 ## Develop
 
@@ -54,4 +54,4 @@ If the brand kit updates, re-copy those two files and run
 ## Deploy
 
 Vercel auto-detects Astro; no adapter needed (fully static output).
-Assign the `codec.pleco.dev` domain to this project in the Vercel dashboard.
+Assign the `haptera.pleco.dev` domain to this project in the Vercel dashboard.

@@ -1,6 +1,6 @@
-// codec/billing/provider.ts
+// haptera/billing/provider.ts
 //
-// The BillingProvider interface — CODEC-v2-CORE spec §4, verbatim.
+// The BillingProvider interface — HAPTERA-CORE spec §4, verbatim.
 //
 // Rules (spec §4):
 // - Adapters normalize; nothing downstream ever branches on processor.

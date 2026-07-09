@@ -1,8 +1,8 @@
 // Owner metrics — pure functions over the processor-blind MemberRecord[] the
 // adapter returns. No processor knowledge here; the dashboard reads these.
 
-import type { MemberRecord } from 'pleco-codec/billing';
-import type { ClubProgram } from 'pleco-codec/billing';
+import type { MemberRecord } from 'pleco-haptera/billing';
+import type { ClubProgram } from 'pleco-haptera/billing';
 
 export interface WindowStat {
   days: number;

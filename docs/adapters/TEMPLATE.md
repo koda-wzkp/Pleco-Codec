@@ -14,7 +14,7 @@ Contract: [SPEC.md](./SPEC.md)
 > in, delete the STOP banner, or advance the stage until every Part 1 row
 > is `CONFIRMED` with evidence. An adapter also needs a paying client and
 > gets built one at a time; feasibility work is cheap, adapter code is not.
-> Remember the sorting test before you even start: CODEC absorbs owned
+> Remember the sorting test before you even start: Haptera absorbs owned
 > mechanisms (clubs, queues, catalogs, comms) and coexists with discovery
 > networks — if this provider is a discovery network in network mode, the
 > answer is coexistence, not an adapter.
@@ -83,7 +83,7 @@ not a failure — it changes what the adapter can be.
 | --- | --- | --- | --- |
 | Does the ToS permit third-party intermediaries / agency access on a client's behalf? | | | |
 | Any prohibition on the specific flows above (e.g. automated writes, data export)? | | | |
-| Any data-handling terms that would conflict with "no CODEC member database"? | | | |
+| Any data-handling terms that would conflict with "no Haptera member database"? | | | |
 
 ### Feasibility verdict
 
@@ -98,10 +98,10 @@ not a failure — it changes what the adapter can be.
 
 ## Part 2 — Mechanism mapping
 
-Stage becomes `MAPPING`. One row per CODEC concept, naming the exact
+Stage becomes `MAPPING`. One row per Haptera concept, naming the exact
 provider API surface, as in [square.md](./square.md).
 
-| CODEC concept | Provider surface | Notes / gaps |
+| Haptera concept | Provider surface | Notes / gaps |
 | --- | --- | --- |
 | Club tier | | |
 | Membership (state, pause/resume/cancel) | | |

@@ -1,5 +1,5 @@
 // Vercel Serverless Function (Node runtime) — email capture for the
-// "Own Your Club" guide. The rest of codec.pleco.dev is a static Astro build;
+// "Own Your Club" guide. The rest of haptera.pleco.dev is a static Astro build;
 // only this route is dynamic. Vercel auto-detects the /api directory and
 // deploys this file as a function independently of the Astro build.
 //
@@ -9,7 +9,7 @@
 //
 // Required env (set in Vercel, never in the repo):
 //   RESEND_API_KEY   – Resend secret key
-//   GUIDE_FROM       – verified sender, e.g. "Pleco CODEC <guide@pleco.dev>"
+//   GUIDE_FROM       – verified sender, e.g. "Pleco Haptera <guide@pleco.dev>"
 //   CONTACT_EMAIL    – the human address Conor talks to leads from (defaults to
 //                      conor@pleco.dev). Used as the guide's reply-to and as the
 //                      default inbox for lead notifications below.
@@ -17,9 +17,9 @@
 //   SITE_URL         – public origin for the PDF link (defaults to prod)
 import { Resend } from 'resend';
 
-const SITE_URL = (process.env.SITE_URL || 'https://codec.pleco.dev').replace(/\/$/, '');
+const SITE_URL = (process.env.SITE_URL || 'https://haptera.pleco.dev').replace(/\/$/, '');
 const EBOOK_PATH = '/Own-Your-Club-ebook.pdf';
-const GUIDE_FROM = process.env.GUIDE_FROM || 'Pleco CODEC <guide@pleco.dev>';
+const GUIDE_FROM = process.env.GUIDE_FROM || 'Pleco Haptera <guide@pleco.dev>';
 // One human address for the whole warm-lead conversation. Notifications land
 // here (so a Gmail "reply from the same address the message was sent to" sends
 // as conor@), and it's the reply-to on the guide email so a lead's reply

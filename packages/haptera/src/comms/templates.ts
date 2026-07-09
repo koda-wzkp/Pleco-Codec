@@ -1,6 +1,6 @@
-// codec/comms/templates.ts
+// haptera/comms/templates.ts
 //
-// Core email templates — CODEC-v2-CORE spec §9.
+// Core email templates — HAPTERA-CORE spec §9.
 //
 // Tone rule (spec §9): member emails read like the venue, not like software.
 // COPY IS PER-CLIENT, TEMPLATES ARE CORE — every template below is a plain

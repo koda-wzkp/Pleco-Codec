@@ -1,6 +1,6 @@
 // Client provisioning — one-time setup for a club instance.
 //
-// For the active instance (CODEC_INSTANCE), creates the plan on the client's
+// For the active instance (HAPTERA_INSTANCE), creates the plan on the client's
 // processor and generates a hosted checkout link per tier, then prints:
 //   1. the SQUARE_/STRIPE_TIER_REFS env line to paste into the deploy env
 //   2. the `checkoutUrls` block to paste into the instance's `launch` config
@@ -13,13 +13,13 @@
 // Usage:
 //   cd apps/club-host
 //   cp .env.example .env   # fill in the processor + Resend secrets
-//   CODEC_INSTANCE=outer-heaven npx tsx --env-file=.env scripts/provision.ts
+//   HAPTERA_INSTANCE=outer-heaven npx tsx --env-file=.env scripts/provision.ts
 //
 // Nothing here writes files or sends email; it only creates the plan + links.
 
 import { activeInstance } from '../src/instances/index.js';
 import { billingProvider } from '../src/lib/providers.js';
-import type { TierId } from 'pleco-codec/billing';
+import type { TierId } from 'pleco-haptera/billing';
 
 const instance = activeInstance();
 const { config } = instance;

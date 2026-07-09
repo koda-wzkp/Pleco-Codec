@@ -1,10 +1,10 @@
 ---
 // The club page. Renders entirely from the active ClubInstance — swap the
-// instance (CODEC_INSTANCE) and this same page renders a different club with no
+// instance (HAPTERA_INSTANCE) and this same page renders a different club with no
 // code change. Processor-blind: it reads config.launch, never the processor.
 import Base from '../layouts/Base.astro';
-import { TierPanels, PerksList, WaitlistForm, ManageLink } from 'pleco-codec/site';
-import type { LaunchMode } from 'pleco-codec/site';
+import { TierPanels, PerksList, WaitlistForm, ManageLink } from 'pleco-haptera/site';
+import type { LaunchMode } from 'pleco-haptera/site';
 import { activeInstance } from '../instances/index.js';
 import { manageHref } from '../lib/providers.js';
 

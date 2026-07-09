@@ -1,6 +1,6 @@
-// codec/billing/square.ts
+// haptera/billing/square.ts
 //
-// SquareProvider — CODEC-v2-CORE spec §5–§6. Implemented now (OHE, Sunset).
+// SquareProvider — HAPTERA-CORE spec §5–§6. Implemented now (OHE, Sunset).
 //
 // Zero runtime dependencies: Square is driven via its REST API with global
 // `fetch`, and webhook signatures are verified with `node:crypto`.
@@ -48,7 +48,7 @@ export interface SquareProviderOptions {
   /**
    * Reverse map from Square subscription plan *variation* id -> TierId, i.e.
    * the inverse of `PlanRef.tierRefs`. Lets `parseWebhook` label `activated`
-   * events with the CODEC tier id instead of the raw variation id.
+   * events with the Haptera tier id instead of the raw variation id.
    */
   tierRefs?: Record<TierId, string>;
   /**

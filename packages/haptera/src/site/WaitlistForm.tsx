@@ -1,5 +1,5 @@
 "use client";
-// codec/site/WaitlistForm.tsx — processor-blind (spec §8), generalized from
+// haptera/site/WaitlistForm.tsx — processor-blind (spec §8), generalized from
 // the Sunset coming-soon spec §5–6.
 //
 // Fields: first name (required), email (required), tier-interest radio —
@@ -122,36 +122,36 @@ export function WaitlistForm({
 
   if (status === "success") {
     return (
-      <div className="codec-waitlist-success" role="status">
+      <div className="haptera-waitlist-success" role="status">
         <p>{successCopy}</p>
       </div>
     );
   }
 
   return (
-    <form className="codec-waitlist-form" onSubmit={handleSubmit} noValidate={false}>
-      {heading ? <h3 className="codec-waitlist-heading">{heading}</h3> : null}
+    <form className="haptera-waitlist-form" onSubmit={handleSubmit} noValidate={false}>
+      {heading ? <h3 className="haptera-waitlist-heading">{heading}</h3> : null}
 
-      <label className="codec-waitlist-field">
-        <span className="codec-waitlist-label">First name</span>
+      <label className="haptera-waitlist-field">
+        <span className="haptera-waitlist-label">First name</span>
         <input type="text" name="firstName" autoComplete="given-name" required />
       </label>
 
-      <label className="codec-waitlist-field">
-        <span className="codec-waitlist-label">Email</span>
+      <label className="haptera-waitlist-field">
+        <span className="haptera-waitlist-label">Email</span>
         <input type="email" name="email" autoComplete="email" required />
       </label>
 
-      <fieldset className="codec-waitlist-tiers">
+      <fieldset className="haptera-waitlist-tiers">
         <legend>Which club interests you?</legend>
         {tierOptions.map((tier) => (
-          <label className="codec-waitlist-tier-option" key={tier.id}>
+          <label className="haptera-waitlist-tier-option" key={tier.id}>
             <input type="radio" name="tierInterest" value={tier.id} />
             <span>{tier.label}</span>
           </label>
         ))}
         {notSureLabel !== null ? (
-          <label className="codec-waitlist-tier-option">
+          <label className="haptera-waitlist-tier-option">
             <input type="radio" name="tierInterest" value="not-sure" />
             <span>{notSureLabel}</span>
           </label>
@@ -159,15 +159,15 @@ export function WaitlistForm({
       </fieldset>
 
       {addOnLabel ? (
-        <label className="codec-waitlist-addon">
+        <label className="haptera-waitlist-addon">
           <input type="checkbox" name="addOnInterest" />
           <span>{addOnLabel}</span>
         </label>
       ) : null}
 
       {(preferenceFields ?? []).map((field) => (
-        <label className="codec-waitlist-field codec-waitlist-preference" key={field.id}>
-          <span className="codec-waitlist-label">{field.label}</span>
+        <label className="haptera-waitlist-field haptera-waitlist-preference" key={field.id}>
+          <span className="haptera-waitlist-label">{field.label}</span>
           <select name={`pref-${field.id}`} defaultValue="">
             <option value="">
               {field.noPreferenceLabel ?? "No preference — dealer's choice"}
@@ -182,15 +182,15 @@ export function WaitlistForm({
       ))}
 
       {notesLabel ? (
-        <label className="codec-waitlist-field codec-waitlist-notes">
-          <span className="codec-waitlist-label">{notesLabel}</span>
+        <label className="haptera-waitlist-field haptera-waitlist-notes">
+          <span className="haptera-waitlist-label">{notesLabel}</span>
           <textarea name="notes" rows={3} placeholder={notesPlaceholder} maxLength={500} />
         </label>
       ) : null}
 
       {/* Honeypot: visually hidden from humans, tempting to bots. */}
       <label
-        className="codec-waitlist-honeypot"
+        className="haptera-waitlist-honeypot"
         aria-hidden="true"
         style={{
           position: "absolute",
@@ -205,13 +205,13 @@ export function WaitlistForm({
       </label>
 
       {status === "error" ? (
-        <p className="codec-waitlist-error" role="alert">
+        <p className="haptera-waitlist-error" role="alert">
           {errorCopy}
         </p>
       ) : null}
 
       <button
-        className="codec-waitlist-submit"
+        className="haptera-waitlist-submit"
         type="submit"
         disabled={status === "sending"}
       >

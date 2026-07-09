@@ -1,19 +1,19 @@
-// A host "instance" = the engine's CodecInstanceConfig (processor, program,
+// A host "instance" = the engine's HapteraInstanceConfig (processor, program,
 // launch mode, comms/owner, scope) PLUS the presentation data a rendered site
 // needs (brand copy, perks, addresses). Nothing here names a processor outside
 // `config.processor` — the pages stay processor-blind.
 //
 // Acceptance test: a new client is representable by one object of this type, with
-// NO changes to packages/codec or to the host's pages/routes.
+// NO changes to packages/haptera or to the host's pages/routes.
 
-import type { CodecInstanceConfig } from 'pleco-codec/config';
+import type { HapteraInstanceConfig } from 'pleco-haptera/config';
 
 export interface ClubInstance {
-  /** URL-safe id, also the CODEC_INSTANCE selector value. */
+  /** URL-safe id, also the HAPTERA_INSTANCE selector value. */
   id: string;
 
   /** The engine instance spec (drives billing, comms, launch mode). */
-  config: CodecInstanceConfig;
+  config: HapteraInstanceConfig;
 
   /** Presentation copy for the club page. */
   copy: {

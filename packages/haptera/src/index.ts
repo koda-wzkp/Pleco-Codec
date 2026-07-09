@@ -1,14 +1,14 @@
-// pleco-codec — CODEC v2 core.
+// pleco-haptera — Haptera v2 core.
 //
 // Membership programs on client-owned rails: billing adapters normalize
 // processors into MemberEvents; comms fan them out via Resend; the site
 // layer renders tiers and links out to hosted checkout. One-time build, no
 // platform cut, Pleco never in the money path.
 //
-// Subpath exports: pleco-codec/billing, pleco-codec/comms, pleco-codec/site,
-// pleco-codec/config.
+// Subpath exports: pleco-haptera/billing, pleco-haptera/comms, pleco-haptera/site,
+// pleco-haptera/config.
 //
-// Note: React COMPONENTS are re-exported only from `pleco-codec/site` (react
+// Note: React COMPONENTS are re-exported only from `pleco-haptera/site` (react
 // is an optional peer dependency; importing the root must not require it).
 // The site layer's prop TYPES are re-exported here type-only.
 

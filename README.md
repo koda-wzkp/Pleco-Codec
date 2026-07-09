@@ -1,22 +1,36 @@
-# Pleco CODEC — monorepo
+# Pleco Haptera — monorepo
 
-CODEC is an owned operations layer for hospitality businesses: it runs the
+Haptera is an owned operations layer for hospitality businesses: it runs the
 mechanisms a venue should own — club/subscription programs, waitlists,
 member comms — on accounts the venue already controls. Billing runs on the
 **client's own** Square or Stripe; signup lives on the client's own site;
 the client owns the code and the member list. No platform cut, no
-per-member fee. CODEC keeps no member database and no passwords. Core is
+per-member fee. Haptera keeps no member database and no passwords. Core is
 Apache-2.0.
+
+> Formerly CODEC. Renamed to Haptera in July 2026; same project, same
+> license, same scope.
+
+## Why Haptera
+
+Haptera are the finger-like structures a kelp uses to grip bedrock. They look like
+roots but aren't: they contain no vascular tissue, and the kelp takes no nutrition
+from the rock it holds. It anchors without extracting.
+
+That's the design constraint. Haptera runs on your accounts — your Square, your
+Stripe, your database, your domain. It holds your club, your waitlist, your comms.
+It takes nothing from the transactions passing through, because it never touches
+them. Apache-2.0. Your code, your data, your customers.
 
 ## Layout
 
 ```
 packages/
-  codec/          The engine (npm package `pleco-codec`). Billing adapters
+  haptera/          The engine (npm package `pleco-haptera`). Billing adapters
                   (Square + Stripe), Resend comms, and processor-blind
                   React site components. Zero runtime deps; React optional peer.
 apps/
-  marketing/      codec.pleco.dev — the marketing + OSS landing site (Astro),
+  marketing/      haptera.pleco.dev — the marketing + OSS landing site (Astro),
                   including the /guide lead-capture funnel.
   club-host/      Instance-configurable host app for client clubs.
 docs/
@@ -32,14 +46,14 @@ FUTURE.md         Deferred / out-of-scope features (the parking lot).
 
 - **Processor as backend.** Members and billing live in the venue's own
   Square/Stripe account; identity is magic-link email auth against the
-  processor's customer records. No CODEC-owned member store, ever. When a
+  processor's customer records. No Haptera-owned member store, ever. When a
   deployment needs richer perks/points/history, the escalation is a hosted
   database in the *client's* account — never a shared multi-tenant one.
-- **Absorb vs. coexist.** CODEC absorbs owned mechanisms (clubs, queues,
+- **Absorb vs. coexist.** Haptera absorbs owned mechanisms (clubs, queues,
   catalogs, comms). Discovery networks that drive customer acquisition
   (OpenTable, Resy, Tock in network mode) are coexisted with, not wrapped.
 - **The money rail stays the processor's.** Checkout happens on
-  processor-hosted pages; card data never touches CODEC.
+  processor-hosted pages; card data never touches Haptera.
 - **Client ownership (Model A).** Every account — processor, hosting,
   repo — belongs to the client from day one; Pleco is a collaborator.
 
@@ -52,7 +66,7 @@ npm install                 # install all workspaces
 npm test                    # run every workspace's tests
 npm run build               # build every workspace
 npm run build --workspace apps/marketing
-npm test  --workspace packages/codec
+npm test  --workspace packages/haptera
 ```
 
 ## Product context
@@ -94,10 +108,10 @@ Variables; the API key never lives in the repo):
 | Variable | Purpose | Default if unset |
 | --- | --- | --- |
 | `RESEND_API_KEY` | Resend secret key — required; without it the function returns a generic failure | — |
-| `GUIDE_FROM` | Verified Resend sender | `Pleco CODEC <guide@pleco.dev>` |
+| `GUIDE_FROM` | Verified Resend sender | `Pleco Haptera <guide@pleco.dev>` |
 | `CONTACT_EMAIL` | Reply-to on the guide email and default notification inbox | `conor@pleco.dev` |
 | `LEAD_NOTIFY_TO` | Inbox receiving lead notifications | `CONTACT_EMAIL` |
-| `SITE_URL` | Public origin used to build the PDF link | `https://codec.pleco.dev` |
+| `SITE_URL` | Public origin used to build the PDF link | `https://haptera.pleco.dev` |
 
 After changing these, test end-to-end with a real address: submit the
 form, confirm the guide email arrives, confirm the notification lands.
@@ -107,11 +121,11 @@ form, confirm the guide email arrives, confirm the notification lands.
 - **Marketing site (`apps/marketing`):** moved from the repo root. Its Vercel
   project's **Root Directory must be set to `apps/marketing`** (Vercel → Project
   → Settings → Build & Deployment → Root Directory), or the production build of
-  codec.pleco.dev breaks on the first deploy after this merges. `vercel.json`
-  and the `api/` function directory travel with the app. The `codec.pleco.dev`
+  haptera.pleco.dev breaks on the first deploy after this merges. `vercel.json`
+  and the `api/` function directory travel with the app. The `haptera.pleco.dev`
   domain is assigned in the Vercel dashboard.
 - **Client host (`apps/club-host`):** one Vercel project **per client**, each
-  with Root Directory `apps/club-host`, its own `CODEC_INSTANCE`, and its own
+  with Root Directory `apps/club-host`, its own `HAPTERA_INSTANCE`, and its own
   secrets. Swap the `@astrojs/node` adapter for `@astrojs/vercel` in
   `apps/club-host/astro.config.mjs` (one line) before deploying.
 
@@ -122,7 +136,7 @@ without JS), and type is IBM Plex Serif/Sans/Mono via Google Fonts.
 ## Status
 
 **Phase 1 — built and green (all three clients representable by config).**
-- `packages/codec` — engine: **Square + Stripe adapters both implemented**,
+- `packages/haptera` — engine: **Square + Stripe adapters both implemented**,
   Resend comms (all lifecycle emails incl. pickup reminder), processor-blind site
   components, `listMembers` + `webhookEventId` on the interface.
 - `apps/club-host` — instance-configurable host: **Outer Heaven** (Square, direct
@@ -137,4 +151,4 @@ without JS), and type is IBM Plex Serif/Sans/Mono via Google Fonts.
 ## License
 
 [Apache-2.0](LICENSE). You may use, modify, and deploy this — that's the
-point: a CODEC build can be maintained by anyone the client hires, forever.
+point: a Haptera build can be maintained by anyone the client hires, forever.

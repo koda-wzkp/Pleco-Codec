@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { activeInstance } from '../../instances/index.js';
 import { billingProvider } from '../../lib/providers.js';
 import { computeMetrics, formatMoney, needsAttention } from '../../lib/metrics.js';
-import type { MemberRecord } from 'pleco-codec/billing';
+import type { MemberRecord } from 'pleco-haptera/billing';
 
 export const prerender = false;
 
@@ -44,7 +44,7 @@ if (pickupFlash?.startsWith('sent:')) {
     <section style="padding-top:16px">
       <div class="wrap">
         {loadError ? (
-          <p class="codec-waitlist-error" role="alert">
+          <p class="haptera-waitlist-error" role="alert">
             Couldn’t reach the processor to load members: {loadError}. Check the
             processor credentials in this deploy’s environment.
           </p>
@@ -101,12 +101,12 @@ if (pickupFlash?.startsWith('sent:')) {
           <p class={pickupMsg.kind === 'ok' ? 'flash-ok' : 'flash-err'} role="status">{pickupMsg.text}</p>
         ) : null}
         <form method="POST" action="/owner/pickup-reminder" class="pickup-form">
-          <label class="codec-waitlist-field">
-            <span class="codec-waitlist-label">Pickup date / window</span>
+          <label class="haptera-waitlist-field">
+            <span class="haptera-waitlist-label">Pickup date / window</span>
             <input type="text" name="pickupOn" placeholder="this Friday, 3–7pm" required />
           </label>
-          <label class="codec-waitlist-field">
-            <span class="codec-waitlist-label">Details (optional)</span>
+          <label class="haptera-waitlist-field">
+            <span class="haptera-waitlist-label">Details (optional)</span>
             <input type="text" name="details" placeholder="Ethiopia Guji, roasted Wednesday" />
           </label>
           <button type="submit" class="btn-small" style="align-self:flex-start">Send reminder</button>

@@ -1,4 +1,4 @@
-// codec/site — the processor-blind site layer (spec §8).
+// haptera/site — the processor-blind site layer (spec §8).
 //
 // Acceptance §12: grep-ing this directory for the two processor names
 // returns nothing. Components render entirely from props/content and link

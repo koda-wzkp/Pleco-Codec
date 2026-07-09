@@ -1,7 +1,7 @@
 // End-to-end: a signed Square webhook → MemberEvent → Resend comms fan-out,
 // with idempotent redelivery. Mirrors the algorithm in
 // src/pages/api/webhooks/billing.ts, exercised against the real built engine
-// (pleco-codec) with global fetch mocked (no live Square/Resend).
+// (pleco-haptera) with global fetch mocked (no live Square/Resend).
 //
 // This is the acceptance path: "webhook→MemberEvent→comms covered end-to-end."
 // The live-processor $1-tier version needs real Square credentials and is run
@@ -10,8 +10,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createHmac } from 'node:crypto';
-import { SquareProvider, StripeProvider } from 'pleco-codec/billing';
-import { ResendComms } from 'pleco-codec/comms';
+import { SquareProvider, StripeProvider } from 'pleco-haptera/billing';
+import { ResendComms } from 'pleco-haptera/comms';
 
 const SIG_KEY = 'test-sig-key';
 const NOTIFY_URL = 'https://club.example/api/webhooks/billing';
