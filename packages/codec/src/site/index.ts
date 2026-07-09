@@ -9,6 +9,6 @@ export type { TierPanelsProps, LaunchMode } from "./TierPanels.js";
 export { PerksList } from "./PerksList.js";
 export type { PerksListProps } from "./PerksList.js";
 export { WaitlistForm } from "./WaitlistForm.js";
-export type { WaitlistFormProps } from "./WaitlistForm.js";
+export type { WaitlistFormProps, PreferenceField } from "./WaitlistForm.js";
 export { ManageLink } from "./ManageLink.js";
 export type { ManageLinkProps } from "./ManageLink.js";

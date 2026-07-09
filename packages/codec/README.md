@@ -168,6 +168,22 @@ import { TierPanels, PerksList, WaitlistForm, ManageLink } from "pleco-codec/sit
     { id: "club-4", label: "Club 4 ($65/mo)" },
   ]}
   addOnLabel="Interested in the Reserve add-on"
+  // Hospitality fields — optional, hidden by default. The zero-labor
+  // fulfillment mode is dealer's choice; the owner toggles these on in the
+  // instance config to trade labor for hospitality. Every dropdown leads
+  // with a no-preference option, and selections travel in the signup
+  // payload to the owner notification (no datastore — v1 rule).
+  preferenceFields={[
+    {
+      id: "color",
+      label: "Wine preference",
+      options: [
+        { value: "red-only", label: "Red only" },
+        { value: "white-only", label: "White only" },
+      ],
+    },
+  ]}
+  notesLabel="Anything we should know?"
   successCopy="You're on the list. We'll email you when pickups begin — no charge until then."
   errorCopy="Something went wrong on our end — try again, or email us at hello@venue.example."
 />

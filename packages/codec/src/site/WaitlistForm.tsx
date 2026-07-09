@@ -8,12 +8,36 @@
 // submissions that fill it (this component still posts it so the server can
 // check).
 //
+// Hospitality fields (all optional, all hidden by default — the zero-labor
+// fulfillment mode is dealer's choice): `preferenceFields` renders per-client
+// preference dropdowns (roast level, red/white only, grind by brew method,
+// ...) whose first option is always the no-preference default, and
+// `notesLabel` renders a free-text notes box. The owner toggles these on in
+// the instance config when they want to trade labor for hospitality. No
+// datastore: selections ride the signup payload and land in the owner
+// notification (v1 rule — the owner's inbox is the preferences ledger).
+//
 // Posts JSON to the configurable `action` endpoint. Success swaps the form
 // for a confirmation block; error shows copy that never blames the user and
 // NEVER clears their input.
 
 import { useState } from "react";
 import type { FormEvent } from "react";
+
+/**
+ * A per-client preference dropdown (hospitality field). The rendered select
+ * always leads with a no-preference option — dealer's choice is the default
+ * answer, so an untouched form costs the owner zero fulfillment labor.
+ */
+export interface PreferenceField {
+  /** Stable key, e.g. "roast", "grind", "color". */
+  id: string;
+  /** Visible label, e.g. "Roast preference". */
+  label: string;
+  options: Array<{ value: string; label: string }>;
+  /** Copy for the leading no-preference option. */
+  noPreferenceLabel?: string;
+}
 
 export interface WaitlistFormProps {
   /** Endpoint the form posts to, e.g. "/api/waitlist". */
@@ -24,6 +48,14 @@ export interface WaitlistFormProps {
   notSureLabel?: string | null;
   /** Optional add-on interest checkbox, e.g. "Interested in the Reserve add-on". */
   addOnLabel?: string;
+  /**
+   * Hospitality dropdowns (roast level, grind, red/white only, ...).
+   * Omitted = hidden = dealer's choice, the zero-labor default.
+   */
+  preferenceFields?: PreferenceField[];
+  /** Renders a free-text notes box when set, e.g. "Anything we should know?". */
+  notesLabel?: string;
+  notesPlaceholder?: string;
   heading?: string;
   submitLabel?: string;
   /** Copy shown after a successful signup. */
@@ -37,6 +69,9 @@ export function WaitlistForm({
   tierOptions,
   notSureLabel = "Not sure yet",
   addOnLabel,
+  preferenceFields,
+  notesLabel,
+  notesPlaceholder,
   heading,
   submitLabel = "Join the list",
   successCopy,
@@ -53,11 +88,21 @@ export function WaitlistForm({
 
     const form = event.currentTarget;
     const data = new FormData(form);
+    // Preferences: only explicit selections travel — the empty value is the
+    // no-preference default and stays out of the payload entirely.
+    const preferences: Record<string, string> = {};
+    for (const field of preferenceFields ?? []) {
+      const value = String(data.get(`pref-${field.id}`) ?? "");
+      if (value) preferences[field.id] = value;
+    }
+
     const payload = {
       firstName: String(data.get("firstName") ?? ""),
       email: String(data.get("email") ?? ""),
       tierInterest: String(data.get("tierInterest") ?? ""),
       addOnInterest: data.get("addOnInterest") === "on",
+      preferences,
+      notes: String(data.get("notes") ?? ""),
       company: String(data.get("company") ?? ""), // honeypot — server drops if filled
     };
 
@@ -117,6 +162,29 @@ export function WaitlistForm({
         <label className="codec-waitlist-addon">
           <input type="checkbox" name="addOnInterest" />
           <span>{addOnLabel}</span>
+        </label>
+      ) : null}
+
+      {(preferenceFields ?? []).map((field) => (
+        <label className="codec-waitlist-field codec-waitlist-preference" key={field.id}>
+          <span className="codec-waitlist-label">{field.label}</span>
+          <select name={`pref-${field.id}`} defaultValue="">
+            <option value="">
+              {field.noPreferenceLabel ?? "No preference — dealer's choice"}
+            </option>
+            {field.options.map((option) => (
+              <option value={option.value} key={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      ))}
+
+      {notesLabel ? (
+        <label className="codec-waitlist-field codec-waitlist-notes">
+          <span className="codec-waitlist-label">{notesLabel}</span>
+          <textarea name="notes" rows={3} placeholder={notesPlaceholder} maxLength={500} />
         </label>
       ) : null}
 
