@@ -27,6 +27,17 @@ here instead of building it.
   processor, the client owns the code and the member list, no platform fee ever.
 
 ## Notes captured during the build
+- **2026-07-09 — publish `pleco-haptera` to npm.** Per-client repos would
+  consume the engine by pinned version instead of vendoring `packages/haptera`,
+  making the update/maintenance boundary explicit: an engine fix ships once to
+  npm, and rolling it out to a client is a deliberate version bump in their
+  repo. A client who ends maintenance keeps their pinned version working
+  forever (Apache-2.0, public registry). The package is already publish-shaped
+  (zero runtime deps, ESM, plain `tsc` build); remaining work is an npm
+  account/org, a version-bump ritual (semver mapped to HAPTERA-CORE §-numbered
+  behavior: breaking a § = major), and nothing in app code — club-host already
+  imports by package name. The `pleco-haptera` name was unclaimed on npm as of
+  2026-07-09.
 - **2026-07-03 — self-serve in-dashboard launch toggle.** The owner dashboard
   shows launch mode and the one-line config flip that switches waitlist→billing.
   A live "flip it from the dashboard" button needs a small persisted flag
