@@ -1,12 +1,15 @@
-# CODEC v2 — Core Architecture Contract
+# Haptera — Core Architecture Contract
+
+> Formerly the CODEC v2 core contract (`CODEC-v2-CORE.md`). Renamed with the
+> project in July 2026; same contract, same section numbering.
 
 The specification the engine implements. Source files cite it by section
-(`// CODEC-v2-CORE spec §N`). This document is the contract; the code is the
+(`// HAPTERA-CORE spec §N`). This document is the contract; the code is the
 implementation. Reconstructed to match what's built — keep them in sync.
 
-Product line: CODEC builds membership/club programs that run on the **client's
+Product line: Haptera builds membership/club programs that run on the **client's
 own** payment processor. One-time build, open source, no platform cut, Pleco
-never in the money path. The engine is a library (`pleco-codec`); a per-client
+never in the money path. The engine is a library (`pleco-haptera`); a per-client
 host app consumes it.
 
 ---
@@ -116,7 +119,7 @@ available for in-person pickup. Therefore:
 UI components (tiers, waitlist form, perks, manage link) render entirely from
 props/content and link OUT to hosted checkout; they never touch card data (no
 PCI) and never name a processor. **Acceptance grep:** the site layer contains
-neither "square" nor "stripe". Stable `codec-*` classNames let client sites
+neither "square" nor "stripe". Stable `haptera-*` classNames let client sites
 style via their own tokens.
 
 ## §9 Comms
@@ -140,7 +143,7 @@ style via their own tokens.
 - Waitlist capture: name + email + tier interest + optional add-on, idempotent
   contact upsert, owner notified with the interest note, honeypot spam guard.
 
-## §10 `CodecInstanceConfig` (per-client instance spec)
+## §10 `HapteraInstanceConfig` (per-client instance spec)
 
 The only thing a new client requires (plus brand tokens/copy). Fields:
 

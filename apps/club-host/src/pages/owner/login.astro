@@ -26,13 +26,13 @@ if (Astro.request.method === 'POST') {
     <section>
       <div class="wrap" style="max-width:420px">
         <h1 class="section-heading">Owner sign-in</h1>
-        <form method="POST" class="codec-waitlist-form" style="margin-top:20px">
-          <label class="codec-waitlist-field">
-            <span class="codec-waitlist-label">Passcode</span>
+        <form method="POST" class="haptera-waitlist-form" style="margin-top:20px">
+          <label class="haptera-waitlist-field">
+            <span class="haptera-waitlist-label">Passcode</span>
             <input type="password" name="passcode" autocomplete="current-password" required autofocus />
           </label>
-          {error ? <p class="codec-waitlist-error" role="alert">That passcode didn’t match. Try again.</p> : null}
-          <button type="submit" class="codec-waitlist-submit">Sign in</button>
+          {error ? <p class="haptera-waitlist-error" role="alert">That passcode didn’t match. Try again.</p> : null}
+          <button type="submit" class="haptera-waitlist-submit">Sign in</button>
         </form>
       </div>
     </section>

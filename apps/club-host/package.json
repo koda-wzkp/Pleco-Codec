@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "CODEC per-client host app. One instance-configurable Astro site that renders any ClubProgram from a CodecInstanceConfig — webhook + waitlist routes, customer UI, owner dashboard. Select the client with CODEC_INSTANCE.",
+  "description": "Haptera per-client host app. One instance-configurable Astro site that renders any ClubProgram from a HapteraInstanceConfig — webhook + waitlist routes, customer UI, owner dashboard. Select the client with HAPTERA_INSTANCE.",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -16,7 +16,7 @@
     "@astrojs/node": "^9.0.0",
     "@astrojs/react": "^4.0.0",
     "astro": "^5.0.0",
-    "pleco-codec": "*",
+    "pleco-haptera": "*",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },

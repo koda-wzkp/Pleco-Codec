@@ -1,13 +1,13 @@
-# pleco-codec
+# pleco-haptera
 
-**CODEC v2 core — membership programs on client-owned rails.**
+**Haptera v2 core — membership programs on client-owned rails.**
 
-CODEC turns a venue's regulars into members: recurring billing on the **client's own payment processor**, signup on the **client's own domain**, member list in the **client's own accounts**. One-time build. No platform cut. The bespoke layer is program design (tiers, pricing, the retention ritual — pickup night, tasting night, game night); this code layer is deliberately boring and reusable.
+Haptera turns a venue's regulars into members: recurring billing on the **client's own payment processor**, signup on the **client's own domain**, member list in the **client's own accounts**. One-time build. No platform cut. The bespoke layer is program design (tiers, pricing, the retention ritual — pickup night, tasting night, game night); this code layer is deliberately boring and reusable.
 
-Anti-goals: CODEC is not a SaaS, not a hosted platform, not a marketplace. **Pleco never sits in the money path.**
+Anti-goals: Haptera is not a SaaS, not a hosted platform, not a marketplace. **Pleco never sits in the money path.**
 
 - License: **Apache-2.0** (see `LICENSE`). Deliberately a separate repo and identity from Promise Pipeline (AGPL-3.0).
-- Zero runtime dependencies — global `fetch` + `node:crypto` only. `react` is an optional peer dependency used only by `pleco-codec/site`.
+- Zero runtime dependencies — global `fetch` + `node:crypto` only. `react` is an optional peer dependency used only by `pleco-haptera/site`.
 - Node >= 20, ES modules, TypeScript strict.
 
 ## Processor routing rule
@@ -30,13 +30,13 @@ Hard limit: **two adapters.** A third gets built when a client pays for it, not 
 │  TierPanels · PerksList · Signup CTA · Waitlist form   │
 │  renders from content + tokens; links OUT to hosted    │
 │  checkout. Never touches card data. No PCI.            │
-│                    pleco-codec/site                    │
+│                    pleco-haptera/site                    │
 ├────────────────────────────────────────────────────────┤
 │ BILLING ADAPTER  (SquareProvider | StripeProvider)     │
 │  create plan · checkout URL · manage URL · webhooks →  │
-│  normalized MemberEvents      pleco-codec/billing      │
+│  normalized MemberEvents      pleco-haptera/billing      │
 ├────────────────────────────────────────────────────────┤
-│ COMMS (Resend)                pleco-codec/comms        │
+│ COMMS (Resend)                pleco-haptera/comms        │
 │  welcome · payment-failed nudge · goodbye ·            │
 │  waitlist→launch campaign · owner notifications        │
 ├────────────────────────────────────────────────────────┤
@@ -55,8 +55,8 @@ Rules:
 ## Install
 
 ```bash
-npm install pleco-codec
-# react is only needed if you use pleco-codec/site
+npm install pleco-haptera
+# react is only needed if you use pleco-haptera/site
 ```
 
 ## Usage
@@ -64,7 +64,7 @@ npm install pleco-codec
 ### 1. Instantiate the billing provider (server-side only)
 
 ```ts
-import { SquareProvider } from "pleco-codec/billing";
+import { SquareProvider } from "pleco-haptera/billing";
 
 const billing = new SquareProvider({
   accessToken: process.env.SQUARE_ACCESS_TOKEN!,
@@ -81,7 +81,7 @@ const billing = new SquareProvider({
 ### 2. Create the plan (once, at setup — or by hand in the Square Dashboard)
 
 ```ts
-import type { ClubProgram } from "pleco-codec/billing";
+import type { ClubProgram } from "pleco-haptera/billing";
 
 const program: ClubProgram = {
   name: "The Sunset Wine Club",
@@ -108,7 +108,7 @@ const checkoutUrls = {
 
 ```ts
 // app/api/webhooks/billing/route.ts
-import { billing, comms } from "@/lib/codec"; // your instances
+import { billing, comms } from "@/lib/haptera"; // your instances
 
 export async function POST(req: Request) {
   const event = await billing.parseWebhook(req); // throws on bad signature
@@ -122,7 +122,7 @@ Add dedupe for production (processors redeliver): read the raw body first, check
 ### 4. Comms
 
 ```ts
-import { ResendComms } from "pleco-codec/comms";
+import { ResendComms } from "pleco-haptera/comms";
 
 const comms = new ResendComms({
   apiKey: process.env.RESEND_API_KEY!,
@@ -151,7 +151,7 @@ Tone rule: member emails read like the venue, not like software. **Copy is per-c
 ### 5. Site layer (processor-blind React)
 
 ```tsx
-import { TierPanels, PerksList, WaitlistForm, ManageLink } from "pleco-codec/site";
+import { TierPanels, PerksList, WaitlistForm, ManageLink } from "pleco-haptera/site";
 
 // Pre-launch (waitlist): tier CTAs anchor to the form.
 <TierPanels program={program} launch={{ mode: "waitlist", anchor: "#wine-club" }} />
@@ -191,11 +191,11 @@ import { TierPanels, PerksList, WaitlistForm, ManageLink } from "pleco-codec/sit
 <ManageLink href={manageUrl} />
 ```
 
-Components are unstyled semantic markup with stable classNames (`codec-tier-panels`, `codec-tier-panel`, `codec-perks-list`, `codec-waitlist-form`, `codec-manage-link`, …) — client sites style them via their own tokens. The `src/site` directory contains **no processor names**; a test enforces it.
+Components are unstyled semantic markup with stable classNames (`haptera-tier-panels`, `haptera-tier-panel`, `haptera-perks-list`, `haptera-waitlist-form`, `haptera-manage-link`, …) — client sites style them via their own tokens. The `src/site` directory contains **no processor names**; a test enforces it.
 
 ### Per-client instance config
 
-`pleco-codec/config` exports `CodecInstanceConfig` — the shape of a per-client instance spec (spec §10): processor choice, `ClubProgram`, retention ritual + calendar, launch mode + switchover, owner notify address + Resend audience, scope/care-plan flags. A new client instance requires **only** an instance spec — no core changes.
+`pleco-haptera/config` exports `HapteraInstanceConfig` — the shape of a per-client instance spec (spec §10): processor choice, `ClubProgram`, retention ritual + calendar, launch mode + switchover, owner notify address + Resend audience, scope/care-plan flags. A new client instance requires **only** an instance spec — no core changes.
 
 ## Environment / configuration
 

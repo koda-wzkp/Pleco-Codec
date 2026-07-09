@@ -33,7 +33,7 @@ nav{position:sticky;top:0;z-index:20;background:rgba(250,246,238,0.86);backdrop-
 .brand svg{width:30px;height:30px;display:block}
 .wm{display:inline-flex;align-items:baseline;gap:0.32em}
 .wm-pleco{font-weight:500}
-.wm-codec{font-weight:600;letter-spacing:0.02em}
+.wm-haptera{font-weight:600;letter-spacing:0.02em}
 .nav-sp{flex:1}
 .nav-links{display:flex;gap:14px;align-items:center;font-size:15px}
 .nav-links a{color:var(--ink);font-weight:500;padding:11px 6px;display:inline-flex;align-items:center;min-height:44px}

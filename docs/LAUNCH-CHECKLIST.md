@@ -1,4 +1,4 @@
-# CODEC — Client Launch Checklist
+# Haptera — Client Launch Checklist
 
 A per-client runbook for taking a `club-host` instance live. Everything below is
 operational: the code is built and tested (engine 54, host 9). These are the
@@ -28,10 +28,10 @@ The Square and Stripe adapters annotate every processor-specific string
 with `// VERIFY:`. **These were written from docs/memory and must be confirmed
 against a live test-mode account before any real money moves.**
 
-- [ ] Square: `grep -rn "VERIFY:" packages/codec/src/billing/square.ts` — resolve
+- [ ] Square: `grep -rn "VERIFY:" packages/haptera/src/billing/square.ts` — resolve
       each against the current Square API + a sandbox account. Pin
       `Square-Version`.
-- [ ] Stripe: `grep -rn "VERIFY:" packages/codec/src/billing/stripe.ts` — resolve
+- [ ] Stripe: `grep -rn "VERIFY:" packages/haptera/src/billing/stripe.ts` — resolve
       each against the current Stripe API + a test-mode account.
 - [ ] Remove or update each `// VERIFY:` note as you confirm it.
 
@@ -43,7 +43,7 @@ Edit `apps/club-host/src/instances/<client>.ts`:
 - [ ] `retentionRitual`, `venueName`, copy, perks.
 - [ ] `ownerNotifyEmail`, `resendAudienceId`.
 - [ ] `scope` (care plan yes/no; if no, a completed handoff doc URL — see
-      `packages/codec/docs/HANDOFF-TEMPLATE.md`).
+      `packages/haptera/docs/HANDOFF-TEMPLATE.md`).
 - [ ] Replace every `REPLACE…` placeholder.
 
 For **Living Room specifically**: confirm the two tier prices (currently marked
@@ -54,7 +54,7 @@ For **Living Room specifically**: confirm the two tier prices (currently marked
 With the client's credentials in `apps/club-host/.env`:
 
 ```sh
-CODEC_INSTANCE=<client> npm run provision --workspace @pleco/club-host
+HAPTERA_INSTANCE=<client> npm run provision --workspace @pleco/club-host
 ```
 
 - [ ] Paste the printed `SQUARE_TIER_REFS` / `STRIPE_TIER_REFS` line into the
@@ -82,7 +82,7 @@ In the processor dashboard:
 
 Per `apps/club-host/.env.example`, in the Vercel project:
 
-- [ ] `CODEC_INSTANCE`, `PUBLIC_SITE_URL`, `OWNER_PASSCODE`, `RESEND_API_KEY`.
+- [ ] `HAPTERA_INSTANCE`, `PUBLIC_SITE_URL`, `OWNER_PASSCODE`, `RESEND_API_KEY`.
 - [ ] Processor secrets (Square or Stripe block), plus the `TIER_REFS` from step 3.
 - [ ] Never commit secrets; they live only in the deploy env.
 
@@ -119,7 +119,7 @@ Per `apps/club-host/.env.example`, in the Vercel project:
 
 ## 9. Handoff
 
-- [ ] Complete `packages/codec/docs/HANDOFF-TEMPLATE.md` for the client (accounts,
+- [ ] Complete `packages/haptera/docs/HANDOFF-TEMPLATE.md` for the client (accounts,
       how billing works, changing prices, pausing members, the automated emails,
       support).
 - [ ] Confirm the client can sign into `/owner`, export their member CSV, and

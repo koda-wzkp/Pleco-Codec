@@ -7,8 +7,8 @@ import {
   SquareProvider,
   StripeProvider,
   type BillingProvider,
-} from 'pleco-codec/billing';
-import { ResendComms } from 'pleco-codec/comms';
+} from 'pleco-haptera/billing';
+import { ResendComms } from 'pleco-haptera/comms';
 import type { ClubInstance } from '../instances/types.js';
 import { env, requireEnv } from './env.js';
 

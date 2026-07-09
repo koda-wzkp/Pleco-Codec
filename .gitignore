@@ -7,4 +7,4 @@ dist/
 # build outputs
 **/dist/
 **/.astro/
-packages/codec/.test-build/
+packages/haptera/.test-build/

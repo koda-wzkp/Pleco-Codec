@@ -1,4 +1,4 @@
-// codec/site/ManageLink.tsx — processor-blind (spec §8).
+// haptera/site/ManageLink.tsx — processor-blind (spec §8).
 //
 // Footer "Manage your membership" link. The href comes from the instance
 // config (ultimately BillingProvider.manageUrl) — this component never knows
@@ -11,7 +11,7 @@ export interface ManageLinkProps {
 
 export function ManageLink({ href, label = "Manage your membership" }: ManageLinkProps) {
   return (
-    <a className="codec-manage-link" href={href}>
+    <a className="haptera-manage-link" href={href}>
       {label}
     </a>
   );

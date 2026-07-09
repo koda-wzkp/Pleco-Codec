@@ -1,6 +1,6 @@
-// codec/config.ts
+// haptera/config.ts
 //
-// CodecInstanceConfig — the per-client instance spec, CODEC-v2-CORE spec §10.
+// HapteraInstanceConfig — the per-client instance spec, HAPTERA-CORE spec §10.
 //
 // Acceptance §12: a new client instance requires ONLY an instance spec (an
 // object of this type plus brand tokens/copy) — no core changes.
@@ -26,7 +26,7 @@ export type LaunchConfig =
       checkoutUrls: Record<TierId, string>;
     };
 
-export interface CodecInstanceConfig {
+export interface HapteraInstanceConfig {
   /** Client/venue display name — used in comms copy and owner emails. */
   venueName: string;
 

@@ -3,7 +3,7 @@
 **Client:** {CLIENT / VENUE NAME}
 **Prepared by:** Pleco
 **Date:** {DATE}
-**Engagement:** CODEC membership build (one-time). Care plan: {YES — see §6 / NO — this document is the support plan}.
+**Engagement:** Haptera membership build (one-time). Care plan: {YES — see §6 / NO — this document is the support plan}.
 
 This document is yours. Everything in it belongs to you: the accounts, the money, the member list, the website. Pleco never sits in the money path.
 

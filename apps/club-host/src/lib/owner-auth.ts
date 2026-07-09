@@ -10,7 +10,7 @@
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { env } from './env.js';
 
-export const OWNER_COOKIE = 'codec_owner';
+export const OWNER_COOKIE = 'haptera_owner';
 
 function hash(passcode: string): string {
   return createHash('sha256').update(passcode).digest('hex');

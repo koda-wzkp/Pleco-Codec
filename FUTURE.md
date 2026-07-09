@@ -22,7 +22,7 @@ here instead of building it.
   has no subscription rails, so Toast shops (Living Room) use Stripe.
 
 ## Hard line (never build)
-- Any **"platform" behavior** where CODEC sits in the money path or takes a cut.
+- Any **"platform" behavior** where Haptera sits in the money path or takes a cut.
   This contradicts the entire product: billing runs on the client's own
   processor, the client owns the code and the member list, no platform fee ever.
 

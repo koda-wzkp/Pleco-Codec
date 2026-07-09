@@ -10,7 +10,7 @@ const pmarkInner = inner(pmarkRaw);
 const fishInner = inner(fishRaw).replace(/\s*fill="[^"]*"/, '');
 
 const EBOOK_URL = '/Own-Your-Club-ebook.pdf';
-const HOME_URL = 'https://codec.pleco.dev/';
+const HOME_URL = 'https://haptera.pleco.dev/';
 
 const chapters = [
   'The platform tax — what 10% really costs',
@@ -29,15 +29,15 @@ const chapters = [
 <!-- FIX 2: light-only; never auto-invert in webviews -->
 <meta name="color-scheme" content="light" />
 <meta name="theme-color" content="#FAF6EE" />
-<title>Own Your Club — the free guide | CODEC</title>
+<title>Own Your Club — the free guide | Haptera</title>
 <meta name="description" content="A short, honest guide to running membership and club programs on rails you own instead of renting them. Free PDF — the platform-tax math, the ownership case, security, maintenance, and how to hire a dev." />
-<link rel="canonical" href="https://codec.pleco.dev/guide" />
+<link rel="canonical" href="https://haptera.pleco.dev/guide" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <meta property="og:title" content="Own Your Club — the free guide" />
 <meta property="og:description" content="The platform-tax math, the ownership case, security, maintenance, and how to hire a dev. Free PDF." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://codec.pleco.dev/guide" />
-<meta property="og:image" content="https://codec.pleco.dev/og.png" />
+<meta property="og:url" content="https://haptera.pleco.dev/guide" />
+<meta property="og:image" content="https://haptera.pleco.dev/og.png" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -63,10 +63,10 @@ const chapters = [
 
 <nav>
   <div class="wrap nav-in">
-    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-haptera">Haptera</span></span></a>
     <span class="nav-sp"></span>
     <div class="nav-links">
-      <a href={HOME_URL}>← Back to codec.pleco.dev</a>
+      <a href={HOME_URL}>← Back to haptera.pleco.dev</a>
     </div>
   </div>
 </nav>
@@ -87,7 +87,7 @@ const chapters = [
           {chapters.map((c) => <li>{c}</li>)}
         </ul>
 
-        <p class="trust">From <a href={HOME_URL}>Pleco / CODEC</a> — the same folks who build these clubs. Written by Conor. No pitch, just the honest case.</p>
+        <p class="trust">From <a href={HOME_URL}>Pleco / Haptera</a> — the same folks who build these clubs. Written by Conor. No pitch, just the honest case.</p>
       </div>
 
       <!-- Capture card -->
@@ -125,7 +125,7 @@ const chapters = [
           <h2>Check your email — the guide is on its way.</h2>
           <p>It’s heading to <span id="done-email">your inbox</span>. Give it a minute; check spam if it’s shy.</p>
           <p class="done-dl">Don’t want to wait? <a href={EBOOK_URL} download>Download the PDF now →</a></p>
-          <p class="done-next">Ready to talk about a club for your business? <a href="mailto:conor@pleco.dev?subject=CODEC%20for%20my%20shop">conor@pleco.dev</a></p>
+          <p class="done-next">Ready to talk about a club for your business? <a href="mailto:conor@pleco.dev?subject=Haptera%20for%20my%20shop">conor@pleco.dev</a></p>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ const chapters = [
 <footer>
   <div class="foot-fish"><svg aria-hidden="true"><use href="#fish" /></svg></div>
   <div class="wrap foot-in">
-    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-codec">CODEC</span></span></a>
+    <a class="brand" href={HOME_URL}><svg aria-hidden="true"><use href="#pmark" /></svg><span class="wm"><span class="wm-pleco">Pleco</span> <span class="wm-haptera">Haptera</span></span></a>
     <span class="foot-sp"></span>
     <a href="https://pleco.dev">pleco.dev</a>
     <a href="mailto:hello@pleco.dev">hello@pleco.dev</a>

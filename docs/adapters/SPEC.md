@@ -1,14 +1,14 @@
-# CODEC adapter specification
+# Haptera adapter specification
 
 Status: v0.1 draft
 Date: 2026-07-07
 Reference implementation: [Square](./square.md) · New adapters start from the [template](./TEMPLATE.md)
 
-CODEC is an owned operations layer for hospitality businesses: it runs the
+Haptera is an owned operations layer for hospitality businesses: it runs the
 mechanisms a venue should own — club/subscription, waitlist, market
 (catalog/online ordering), member comms — on accounts the venue already
 controls. An **adapter** is the piece that binds one external provider
-(a payment processor, a comms service) to CODEC's canonical model.
+(a payment processor, a comms service) to Haptera's canonical model.
 
 ## 1. Ground rules
 
@@ -16,7 +16,7 @@ These are constraints every adapter must satisfy, not preferences:
 
 1. **The provider is the source of truth.** For members and billing, that
    is the venue's payment processor (Square primary, Stripe secondary).
-   CODEC and Pleco own no member database and no password store. An adapter
+   Haptera and Pleco own no member database and no password store. An adapter
    reads from and writes to the provider; it never becomes a second copy of
    record. Any caching is ephemeral and rebuildable from the provider.
 2. **Escalation path.** If a deployment needs rich perks, points, or
@@ -25,11 +25,11 @@ These are constraints every adapter must satisfy, not preferences:
    billing). Never a shared multi-tenant store under Pleco's control.
 3. **The money rail is never absorbed.** Adapters initiate billing through
    provider-hosted checkout and provider subscription objects. Card data
-   never touches CODEC.
-4. **Absorb vs. coexist.** Adapters exist only for mechanisms CODEC
+   never touches Haptera.
+4. **Absorb vs. coexist.** Adapters exist only for mechanisms Haptera
    *absorbs*: queues, catalogs, clubs, comms. Discovery networks that drive
    customer acquisition (OpenTable, Resy, Tock operating in network mode)
-   are *coexisted with* — never wrapped, proxied, or hidden behind CODEC.
+   are *coexisted with* — never wrapped, proxied, or hidden behind Haptera.
    Write access to reservation networks is partner-gated and **unverified**;
    no adapter may be specced against it until access is confirmed in
    writing.
@@ -68,7 +68,7 @@ client's own provider account.
 
 ### 2.3 Configure
 
-Bind CODEC mechanisms to concrete provider objects — e.g. "club tier
+Bind Haptera mechanisms to concrete provider objects — e.g. "club tier
 *Founding Member* is provider subscription plan `X`", "the market shows
 provider catalog category `Y`".
 
@@ -81,7 +81,7 @@ provider catalog category `Y`".
 
 ### 2.4 Sync
 
-Keep CODEC's ephemeral view consistent with the provider.
+Keep Haptera's ephemeral view consistent with the provider.
 
 - **Initial sync**: full read of the configured objects (tiers, catalog
   items, membership states) into cache.
@@ -92,7 +92,7 @@ Keep CODEC's ephemeral view consistent with the provider.
 
 ### 2.5 Webhook handling
 
-Translate provider webhooks into canonical CODEC events.
+Translate provider webhooks into canonical Haptera events.
 
 - MUST verify the provider's webhook signature before parsing; unverifiable
   requests are rejected and logged, never processed.
@@ -131,7 +131,7 @@ Required:
 - List club tiers (name, price, billing cadence) from provider objects.
 - Produce a provider-hosted checkout for a given tier, optionally with a
   deferred billing start date (waitlist promotion depends on this).
-- Look up a member by email address — this backs magic-link auth. CODEC
+- Look up a member by email address — this backs magic-link auth. Haptera
   emails a signed one-time link; on click, the adapter resolves the email
   to the provider's customer record. No passwords exist anywhere.
 - Read membership state for a member (active, paused, canceled, delinquent)
@@ -163,7 +163,7 @@ Required:
 - Read a single item.
 
 Optional (declare if supported): inventory quantities; write-back
-(creating/updating provider items from CODEC is not required and most
+(creating/updating provider items from Haptera is not required and most
 deployments should author the catalog in the provider's own dashboard).
 
 ### 3.4 Comms
@@ -181,7 +181,7 @@ Audience side (processor adapters):
 Delivery side (comms adapters):
 - Send a message to a recipient list from a client-owned sender identity.
 - Honor unsubscribes; suppression status must live with the comms
-  provider, not in CODEC.
+  provider, not in Haptera.
 
 ### 3.5 Reservations — deliberately absent
 
@@ -213,7 +213,7 @@ Every adapter operation resolves to success or a typed error:
   `conflict`. Exponential backoff with jitter; honor an explicit
   provider-supplied delay (e.g. `Retry-After`) over the computed one.
 - Every write the provider accepts an idempotency key for MUST send one,
-  derived from the CODEC-side intent (e.g. the promotion or checkout id),
+  derived from the Haptera-side intent (e.g. the promotion or checkout id),
   so a retried write cannot double-charge or double-create.
 - Writes without provider idempotency support MUST be guarded by a
   read-before-write check and declared in the adapter's notes.
@@ -241,7 +241,7 @@ An adapter ships a static manifest: its id, provider, adapter version, the
 provider API version it is pinned to, and per-mechanism support status —
 `confirmed` (verified against the live API), `partial` (subset works;
 notes say which), or `unverified` (specced from docs only, never exercised;
-not deployable). The manifest is data, not behavior: CODEC decides what to
+not deployable). The manifest is data, not behavior: Haptera decides what to
 wire up by reading it, and an adapter throwing `unsupported` for something
 its manifest claims is a defect.
 
@@ -364,7 +364,7 @@ export interface Money {
   currency: string; // ISO 4217
 }
 
-/** A pointer into the provider's records — CODEC persists nothing about the member. */
+/** A pointer into the provider's records — Haptera persists nothing about the member. */
 export interface MemberRef {
   adapter: string;
   providerCustomerId: string;
@@ -395,7 +395,7 @@ export interface Membership {
 
 export interface ClubCapability {
   listTiers(): Promise<ClubTier[]>;
-  /** Provider-hosted checkout URL; CODEC never touches card data. */
+  /** Provider-hosted checkout URL; Haptera never touches card data. */
   createCheckout(input: {
     tierId: string;
     email?: string;

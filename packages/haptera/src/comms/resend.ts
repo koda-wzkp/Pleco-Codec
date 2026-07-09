@@ -1,6 +1,6 @@
-// codec/comms/resend.ts
+// haptera/comms/resend.ts
 //
-// Comms layer — CODEC-v2-CORE spec §9. Resend via its plain REST API
+// Comms layer — HAPTERA-CORE spec §9. Resend via its plain REST API
 // (https://resend.com/docs/api-reference) with global `fetch`; zero runtime
 // dependencies.
 //

@@ -1,6 +1,6 @@
-// codec/billing/stripe.ts
+// haptera/billing/stripe.ts
 //
-// StripeProvider — CODEC-v2-CORE spec §7. Implemented for Living Room-class
+// StripeProvider — HAPTERA-CORE spec §7. Implemented for Living Room-class
 // engagements (Stripe-on-Toast shops, Table22 migrations).
 //
 // Zero runtime dependencies: Stripe is driven via its REST API with global
@@ -37,7 +37,7 @@ export interface StripeProviderOptions {
   redirectUrl?: string;
   /**
    * Reverse map Stripe Price id -> TierId, i.e. the inverse of PlanRef.tierRefs.
-   * Lets parseWebhook/listMembers label events with the CODEC tier id instead
+   * Lets parseWebhook/listMembers label events with the Haptera tier id instead
    * of the raw price id. Set after createPlan.
    */
   tierRefs?: Record<TierId, string>;
