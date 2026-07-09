@@ -1,0 +1,27 @@
+---
+// Base document. Quality floor lives here + in app.css:
+// - color-scheme: light declared (meta + CSS) so mobile in-app webviews don't
+//   force-darken the page.
+// - Content is server-rendered HTML; nothing text-critical depends on JS.
+import '../styles/app.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#FAF6EE" />
+    <title>{title}</title>
+    {description ? <meta name="description" content={description} /> : null}
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,80 @@
+---
+// The club page. Renders entirely from the active ClubInstance — swap the
+// instance (CODEC_INSTANCE) and this same page renders a different club with no
+// code change. Processor-blind: it reads config.launch, never the processor.
+import Base from '../layouts/Base.astro';
+import { TierPanels, PerksList, WaitlistForm, ManageLink } from 'pleco-codec/site';
+import type { LaunchMode } from 'pleco-codec/site';
+import { activeInstance } from '../instances/index.js';
+import { manageHref } from '../lib/providers.js';
+
+export const prerender = false;
+
+const instance = activeInstance();
+const { config, copy } = instance;
+const program = config.program;
+
+// Map the instance's launch config to the component's LaunchMode.
+const launch: LaunchMode =
+  config.launch.mode === 'waitlist'
+    ? { mode: 'waitlist', anchor: config.launch.anchor }
+    : { mode: 'billing', checkoutUrls: config.launch.checkoutUrls };
+
+const isWaitlist = config.launch.mode === 'waitlist';
+const switchover =
+  config.launch.mode === 'waitlist' ? config.launch.switchover : undefined;
+
+const manageUrl = manageHref();
+---
+<Base title={copy.headline} description={copy.intro}>
+  <main>
+    <header class="club-hero">
+      <div class="wrap">
+        <h1>{copy.headline}</h1>
+        <p class="intro">{copy.intro}</p>
+      </div>
+    </header>
+
+    <section aria-labelledby="tiers-heading">
+      <div class="wrap">
+        <h2 class="section-heading" id="tiers-heading">{copy.tiersHeading}</h2>
+        {switchover ? <p class="switchover-note">{switchover}</p> : null}
+        <TierPanels program={program} launch={launch} />
+      </div>
+    </section>
+
+    <section aria-labelledby="perks-heading">
+      <div class="wrap">
+        <h2 class="section-heading" id="perks-heading">What members get</h2>
+        <PerksList perks={copy.perks} />
+      </div>
+    </section>
+
+    {isWaitlist ? (
+      <section id="join" aria-labelledby="join-heading">
+        <div class="wrap">
+          <h2 class="section-heading" id="join-heading">Join the founding list</h2>
+          <WaitlistForm
+            client:load
+            action="/api/waitlist"
+            tierOptions={program.tiers.map((t) => ({ id: t.id, label: t.label }))}
+            addOnLabel={copy.waitlistAddOnLabel}
+            successCopy={copy.successCopy}
+            errorCopy={copy.errorCopy}
+            submitLabel="Join the list"
+          />
+        </div>
+      </section>
+    ) : null}
+
+    <footer class="club-footer">
+      <div class="wrap">
+        <p>
+          {config.venueName} · Membership runs on {config.venueName}’s own account.
+          {' '}
+          <ManageLink href={manageUrl} />
+        </p>
+      </div>
+    </footer>
+  </main>
+</Base>

@@ -3,3 +3,8 @@ dist/
 .astro/
 .vercel/
 .DS_Store
+
+# build outputs
+**/dist/
+**/.astro/
+packages/codec/.test-build/

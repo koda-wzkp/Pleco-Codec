@@ -1,0 +1,53 @@
+---
+// Processor-blind member self-management. The member enters the email they
+// signed up with; we ask the billing adapter for their management URL and
+// redirect there — a hosted self-serve portal (pause/cancel/update card), the
+// venue's account page, or a mailto fallback, depending on what the adapter
+// supports. The page never knows which processor is behind the redirect.
+import Base from '../layouts/Base.astro';
+import { activeInstance } from '../instances/index.js';
+import { billingProvider } from '../lib/providers.js';
+
+export const prerender = false;
+
+const instance = activeInstance();
+let error: string | null = null;
+
+if (Astro.request.method === 'POST') {
+  const data = await Astro.request.formData();
+  const email = String(data.get('email') ?? '').trim();
+  if (!email || !email.includes('@')) {
+    error = 'Please enter the email you signed up with.';
+  } else {
+    try {
+      const url = await billingProvider(instance).manageUrl(email);
+      return Astro.redirect(url, 302);
+    } catch {
+      error =
+        'We couldn’t find a membership for that email. Double-check it, or ' +
+        `reach us at ${instance.contactEmail} and we’ll sort it out.`;
+    }
+  }
+}
+---
+<Base title={`Manage your membership — ${instance.config.venueName}`}>
+  <main>
+    <section>
+      <div class="wrap" style="max-width:460px">
+        <h1 class="section-heading">Manage your membership</h1>
+        <p class="switchover-note">
+          Enter the email you signed up with and we’ll take you to your
+          membership — pause, update your card, or cancel, all in one place.
+        </p>
+        <form method="POST" class="codec-waitlist-form" style="margin-top:16px">
+          <label class="codec-waitlist-field">
+            <span class="codec-waitlist-label">Email</span>
+            <input type="email" name="email" autocomplete="email" required autofocus />
+          </label>
+          {error ? <p class="codec-waitlist-error" role="alert">{error}</p> : null}
+          <button type="submit" class="codec-waitlist-submit">Continue</button>
+        </form>
+      </div>
+    </section>
+  </main>
+</Base>
